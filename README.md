@@ -3,10 +3,10 @@ FunTaxIS-lite is a faster version of the FunTaxIS algorithm. FunTaxIS considers 
 # Dependencies
 The required dependencies, to successfully run FunTaxIS-lite, are the following:
 
-C/C++ compiler
-Cython
-Owlready2
-argparse
+ - C/C++ compiler
+ - Cython
+ - Owlready2
+ - argparse
 
 Optional dependence is the following:
 
