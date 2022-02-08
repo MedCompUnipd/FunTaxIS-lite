@@ -60,3 +60,30 @@ The configuration file contains the following parameters:
 - `type`: the type of taxonomic constraints generated. Allowed values are `automatic`, `auto`, `a`, `manual`, `man`, and `m`. (Optional. Default: manual and automatic.)
 - `results`: the output files folder. (Mandatory.)
 
+## Containers
+
+In the `containers` folder contains the [Docker](https://www.docker.com/) and [Singularity](https://sylabs.io/singularity/) definition files.
+
+To build the container use one of the following commands (with root permission) inside the FunTaxIS-lite folder:
+
+    docker build -t <image_name> -f <dockerfile_path>
+
+or
+
+    singularity build -F <image_name> <definition_file_path>
+
+for Docker and Singularity respectively.
+
+After the container is builted, the container can be used with one of the following commands:
+
+    docker run <image_name> [options] <config_file_path>
+
+or
+
+    singularity run <image_name> [options] <config_file_path>
+
+The available options are the following:
+* `-a`: to generate the taxonomic constraints of all the species found in the input data.
+* `-d`: to download all the necessary data to correctly run FunTaxIS-lite.
+* `-f`: to use the complete FunTaxIS pipeline.
+* `-s`: to generate the taxonomic constraints of the species chosen by the user.
