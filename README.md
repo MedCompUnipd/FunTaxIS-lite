@@ -1,6 +1,6 @@
 # FunTaxIS-Lite
 FunTaxIS-lite is a faster version of the FunTaxIS algorithm. FunTaxIS considers Gene Ontology (GO) terms and their frequencies found in the Gene Ontology Annotation (GOA) database. Since annotations are linked to proteins and species, the frequencies of GO terms can be associated with the species (identified by an ID) which the proteins belong to. This association between GO terms and taxonomic ID is exploited to infer which terms are allowed or forbidden for annotating proteins of a particular species, providing a set of constraints between them.
-# Dependencies
+## Dependencies
 The required dependencies, to successfully run FunTaxIS-lite, are the following:
 
 * C/C++ compiler
@@ -16,7 +16,7 @@ Optional dependence is the following:
 
 The Beautiful Soup library is used to automatically get the new taxonomic ID when an ID writes in the taxonConstraintsDef.txt file is not found in the tree. Otherwise a warning is thrown.
 
-# Usage
+## Usage
 
 FunTaxIS-lite can be run in two ways:
 
