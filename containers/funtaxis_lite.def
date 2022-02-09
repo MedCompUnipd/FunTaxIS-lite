@@ -1,0 +1,43 @@
+Bootstrap: docker
+From: python:3-alpine
+Stage: build
+
+
+%setup
+    mkdir -p /funtaxis-lite/src/
+    mkdir -p /funtaxis-lite/add_files/
+
+
+%files
+    ../add_files/* /funtaxis-lite/add_files/
+    ../src/* /funtaxis-lite/src/
+    ../*.sh /funtaxis-lite/
+
+
+%post
+    apk add bash build-base
+    python -m pip install --upgrade pip
+    pip3 install argparse Cython Owlready2 beautifulsoup4
+
+
+%environment
+    export LC_ALL=C
+
+
+%runscript
+    bash /funtaxis-list/launcher.sh "@"
+
+%test
+	python3 --version
+    python3 -c 'import argparse, owlready2, bs4'
+
+
+%labels
+    Author Davide
+    Version v1.0
+    MyLabel FunTaxIS-lite
+
+
+%help
+    Container with FunTaxIS-lite.
+    This installation is based on Python3 and Alpine OS.
