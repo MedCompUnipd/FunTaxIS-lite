@@ -145,7 +145,7 @@ fi
 # Otherwise, from the given path extracts the folder path and the file name.
 if [[ ${#go_folder} -eq 0 ]]
 then
-    go_folder="${base_folder}input/go/"
+    go_folder="${base_folder}input/goa/"
     used_go='go-plus.owl'
 else
     case "${go_folder}" in
