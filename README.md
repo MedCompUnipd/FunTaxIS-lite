@@ -1,4 +1,4 @@
-# FunTaxIS-Lite
+# FunTaxIS-lite
 FunTaxIS-lite is a faster version of the [FunTaxIS](https://www.nature.com/articles/srep31971) algorithm. FunTaxIS considers Gene Ontology (GO) terms and their frequencies found in the Gene Ontology Annotation (GOA) database. Since annotations are linked to proteins and species, the frequencies of GO terms can be associated with the species (identified by an ID) which the proteins belong to. This association between GO terms and taxonomic ID is exploited to infer which terms are allowed or forbidden for annotating proteins of a particular species, providing a set of constraints between them.
 ## Dependencies
 The required dependencies, to successfully run FunTaxIS-lite, are the following:
