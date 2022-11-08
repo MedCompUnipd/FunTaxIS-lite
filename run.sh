@@ -201,19 +201,19 @@ fi
 # Sets the taxonomic definition file in the add_files folder if it is not definied in the configuration file.
 if [[ ${#tax_constr_def_file} -eq 0 ]]
 then
-    tax_constr_def_file="${real_path}/add_files/taxonConstraintsDef.txt"
+    tax_constr_def_file="${real_path}input/add_files/taxonConstraintsDef.txt"
 fi
 
 # Sets the list of species file in the add_files folder if it is not definied in the configuration file.
 if [[ ${#species_list_file} -eq 0 ]]
 then
-    species_list_file="${real_path}/add_files/listOfSpecies.txt"
+    species_list_file="${real_path}input/add_files/final_list_def.txt"
 fi
 
 # Sets the manual constratins in the add_files if it is not defined in the configuration file.
 if [[ ${#manual_constr_file} -eq 0 ]]
 then
-    manual_constr_file="${real_path}/add_files/manualConstraints.txt"
+    manual_constr_file="${real_path}input/add_files/manualConstraints.txt"
 fi
 
 # Sets the cut-off value to 500 if it is not defined in the configuration file.
