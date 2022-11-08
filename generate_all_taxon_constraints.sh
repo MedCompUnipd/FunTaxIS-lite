@@ -103,14 +103,14 @@ unclassified_file="${config_array[unclassified]}" # list of unclassified and oth
 # Sets the taxonomy folder if not defined in the configuration file.
 if [[ ${#taxonomy_folder} -eq 0 ]]
 then
-   taxonomy_folder="${base_folder}input/taxonomy/"
+   taxonomy_folder="${base_folder}/input/taxonomy/"
 fi
 
 # Sets the gene ontology folder and the gene ontology file name if the gene ontology file path is not defined in the configuration file.
 # Otherwise, from the given path extracts the folder path and the file name.
 if [[ ${#go_folder} -eq 0 ]]
 then
-    go_folder="${base_folder}input/go/"
+    go_folder="${base_folder}/input/go/"
     used_go='go-plus.owl'
 else
     case "${go_folder}" in
@@ -123,7 +123,7 @@ fi
 # Otherwise, from the given path extracts the folder path and the file name.
 if [[ ${#goa_folder} -eq 0 ]]
 then
-    goa_folder="${base_folder}input/goa/"
+    goa_folder="${base_folder}/input/goa/"
 else
     used_goa=$(echo "${goa_folder}" | awk -F/ '{print $NF}')
     goa_folder=${goa_folder%"${used_goa}"}
@@ -132,26 +132,26 @@ fi
 # Sets the taxonomic definition file in the add_files folder if it is not definied in the configuration file.
 if [[ ${#tax_constr_def_file} -eq 0 ]]
 then
-    tax_constr_def_file="${real_path}/add_files/taxonConstraintsDef.txt"
+    tax_constr_def_file="${real_path}/input/add_files/taxonConstraintsDef.txt"
 fi
 
 # Sets the list of species file in the add_files folder if it is not definied in the configuration file.
 if [[ ${#species_list_file} -eq 0 ]]
 then
-    species_list_file="${real_path}/add_files/listOfSpecies.txt"
+    species_list_file="${real_path}/input/add_files/listOfSpecies.txt"
 fi
 
 # Sets the list of species file in the add_files folder if it is not definied in the configuration file.
 if [[ ${#unclassified_file} -eq 0 ]]
 then
-    unclassified_file="${real_path}/add_files/excluded_nodes_januaryGOA.txt"
+    unclassified_file="${real_path}/input/add_files/excluded_nodes.txt"
 fi
 
 
 # Sets the manual constratins in the add_files if it is not defined in the configuration file.
 if [[ ${#manual_constr_file} -eq 0 ]]
 then
-    manual_constr_file="${real_path}/add_files/manualConstraints.txt"
+    manual_constr_file="${real_path}/input/add_files/manualConstraints.txt"
 fi
 
 # Sets the cut-off value to 500 if it is not defined in the configuration file.
@@ -181,6 +181,8 @@ fi
 case "${type}" in
     # Generate only automatic taxonomic constraints using the data from the filtered gene ontology annotation file.
     "automatic"|"a"|"auto" )
+                         echo 'Remove unclassified organisms';
+                         "${src_folder}"./get_unclassified_id.py -merge "${taxonomy_folder}merged.dmp" -taxa "${taxonomy_folder}nodes.dmp" -names "${taxonomy_folder}names.dmp" -constraints "${tax_constr_def_file}" -out "${unclassified_file}"
                          echo 'Discard ND, roots and InterPro and PANTHER hits from GOA' ;
                          "${src_folder}"./purgeRootsInterproFormGaf.py -gaf "${goa_folder}${used_goa}" -unclass "${unclassified_file}" -gafout "${int_file_folder}goa_uniprot_all_no_interpro_no_panther.gaf" -no_interpro -no_panther ;
 
@@ -244,6 +246,10 @@ case "${type}" in
 
     # Generate the taxonomic constraints using data from the gene ontology consortium and the gene ontology annotation. The first ones are more important than the second ones. 
     * )
+        
+        echo 'Remove unclassified organisms';
+        "${src_folder}"./get_unclassified_id.py -merge "${taxonomy_folder}merged.dmp" -taxa "${taxonomy_folder}nodes.dmp" -names "${taxonomy_folder}names.dmp" -constraints "${tax_constr_def_file}" -out "${unclassified_file}"
+        
         echo 'Discard ND, roots and InterPro and PANTHER hits from GOA' ;
         "${src_folder}"./purgeRootsInterproFormGaf.py -gaf "${goa_folder}${used_goa}" -unclass "${unclassified_file}" -gafout "${int_file_folder}goa_uniprot_all_no_interpro_no_panther.gaf" -no_interpro -no_panther ;
 
