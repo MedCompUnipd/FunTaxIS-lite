@@ -1,9 +1,9 @@
-#!usr/bin/env python3.9
+#!/usr/bin/python3.9
 
 from taxonLibrary3 import *
 import argparse
 
-def main():
+def main(args):
     nodes = []
     taxa = Taxon(args['taxa'],args['merge'],args['names'])
     with open(args['constraints'],'r') as input:
