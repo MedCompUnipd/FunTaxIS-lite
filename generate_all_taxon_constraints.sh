@@ -138,7 +138,7 @@ fi
 # Sets the list of species file in the add_files folder if it is not definied in the configuration file.
 if [[ ${#species_list_file} -eq 0 ]]
 then
-    species_list_file="${real_path}/input/add_files/listOfSpecies.txt"
+    species_list_file="${real_path}/input/add_files/final_list_def.txt"
 fi
 
 # Sets the list of species file in the add_files folder if it is not definied in the configuration file.
