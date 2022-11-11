@@ -20,7 +20,7 @@ The Beautiful Soup library is used to automatically get the new taxonomic ID whe
 
 Allow all permission (rwx) on src folder before running FunTaxIS-lite by typing the following command :
    <sub> chmod -R 777 src/ </sub>
-FunTaxIS-lite can be run in two ways:
+<br> FunTaxIS-lite can be run in two ways:
 
 1.  Using one script.
 2.  Using a specific step scripts.
