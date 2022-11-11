@@ -182,7 +182,7 @@ case "${type}" in
     # Generate only automatic taxonomic constraints using the data from the filtered gene ontology annotation file.
     "automatic"|"a"|"auto" )
                          echo 'Remove unclassified organisms';
-                         "${src_folder}"./get_unclassified_id.py -merge "${taxonomy_folder}merged.dmp" -taxa "${taxonomy_folder}nodes.dmp" -names "${taxonomy_folder}names.dmp" -constraints "${tax_constr_def_file}" -out "${unclassified_file}"
+                         "${src_folder}"./get_unclassified_id.py -merge "${taxonomy_folder}merged.dmp" -taxa "${taxonomy_folder}nodes.dmp" -names "${taxonomy_folder}names.dmp" -constraints "${tax_constr_def_file}" -out "${unclassified_file}";
                          echo 'Discard ND, roots and InterPro and PANTHER hits from GOA' ;
                          "${src_folder}"./purgeRootsInterproFormGaf.py -gaf "${goa_folder}${used_goa}" -unclass "${unclassified_file}" -gafout "${int_file_folder}goa_uniprot_all_no_interpro_no_panther.gaf" -no_interpro -no_panther ;
 
@@ -248,7 +248,7 @@ case "${type}" in
     * )
         
         echo 'Remove unclassified organisms';
-        "${src_folder}"./get_unclassified_id.py -merge "${taxonomy_folder}merged.dmp" -taxa "${taxonomy_folder}nodes.dmp" -names "${taxonomy_folder}names.dmp" -constraints "${tax_constr_def_file}" -out "${unclassified_file}"
+        "${src_folder}"./get_unclassified_id.py -merge "${taxonomy_folder}merged.dmp" -taxa "${taxonomy_folder}nodes.dmp" -names "${taxonomy_folder}names.dmp" -constraints "${tax_constr_def_file}" -out "${unclassified_file}";
         
         echo 'Discard ND, roots and InterPro and PANTHER hits from GOA' ;
         "${src_folder}"./purgeRootsInterproFormGaf.py -gaf "${goa_folder}${used_goa}" -unclass "${unclassified_file}" -gafout "${int_file_folder}goa_uniprot_all_no_interpro_no_panther.gaf" -no_interpro -no_panther ;
