@@ -3,8 +3,8 @@
 ## "in taxon" is different from "only in taxon" because it means that the GO and its sons can be used for that taxon
 ## and are not exclusively used in that taxon. No assumptions are made for other taxa.
 ## both "Never in taxon" and "in taxon" of this file overrule other constraints !!!!
-GO_0009579  thylakoid cellular_component  2 Bacteria  Never in taxon
-GO_0015979  photosynthesis  biological_process  2 Bacteria  Never in taxon
-GO_0000001  mitochondrion inheritance biological_process  40674 mammalia  in taxon
-GO_0030245  cellulose catabolic process biological_process  9443  Primates  Never in taxon
-GO_0030243  cellulose metabolic process biological_process  9443  Primates  Never in taxon
+GO_0009579	thylakoid	cellular_component	2	Bacteria	Never in taxon
+GO_0015979	photosynthesis	biological_process	2	Bacteria	Never in taxon
+GO_0000001	mitochondrion inheritance	biological_process	40674	mammalia	in taxon
+GO_0030245	cellulose catabolic process	biological_process	9443	Primates	Never in taxon
+GO_0030243	cellulose metabolic process	biological_process	9443	Primates	Never in taxon
