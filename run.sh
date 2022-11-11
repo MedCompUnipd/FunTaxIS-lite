@@ -161,8 +161,6 @@ debug="${config_array[debug]}" # It's  the intermediate files are removed or not
 used_go='' # It's the gene ontology file name.
 used_goa='goa_uniprot_all.gaf' # It's the gene ontology annotation file name.
 
-#Set permission on src folder ${src_folder}
-chmod -r 777  "${src_folder}"
 
 # Sets the debug value to the respective boolean value (false or true) using the setBoolean function.
 if [[ ${#debug} -ne 0 ]]
