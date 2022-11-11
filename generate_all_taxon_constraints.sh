@@ -100,9 +100,6 @@ used_goa='goa_uniprot_all.gaf' # It's the gene ontology annotation file name.
 unclassified_file="${config_array[unclassified]}" # list of unclassified and other nodes above order rank to remove their annotation contribution
 
 
-#set all permission to src folder
-chmod -r 777  "${src_folder}"
-
 # Sets the taxonomy folder if not defined in the configuration file.
 if [[ ${#taxonomy_folder} -eq 0 ]]
 then
