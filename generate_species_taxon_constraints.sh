@@ -199,7 +199,7 @@ fi
 for file in "${int_file_folder}"*
 do
 	case "${file}" in
-		"${int_file_folder}constraintsCorrectNR_and_splitUnionNEW.txt"|"${int_file_folder}freqCumul_cluster_speciesGOusage_no_interpro_no_panther_NEVER_IN_reformat.txt" ) ((count+=1)) ;;
+		"${int_file_folder}constraintsCorrectNR_and_splitUnionNEW.txt"|"${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN_reformat.txt" ) ((count+=1)) ;;
 		* )	;;
 	esac
 done
