@@ -17,6 +17,7 @@ function verifyGoFilePresence() {
     fi
 }
 
+
 # Function to verify the presence of the gene ontology annotation file. If not present, we download it.
 # Parameters:
 #  $1: the path where we save the gene ontology annotation file.
