@@ -26,16 +26,23 @@ Allow all permission (rwx) on src folder before running FunTaxIS-lite by typing 
    
 <br> FunTaxIS-lite can be run in two ways:
 
-1.  Using one script.
-2.  Using a specific step scripts.
+1.  Running the whole pipeline from scratch using one command
+2.  Running only the desired modules of the pipeline (using the `run.sh` script or by hand)
 
-To use FunTaxIS-lite with one script run the `run.sh` script as follow:
+To run FunTaxIS-lite use the `run.sh` script as follow:
 
-    ./run.sh <config-file>
+    ./run.sh <options>
 
-the script downloads the required files (if necessary), generates the taxonomic constraints for each species found in the selected databases and computes the taxonomic constraints for the user-selected species.
+with options:
 
-To use FunTaxIS-lite with a specific step script run the script as follow:
+- `-h` for help message
+- `-f` to run the full pipeline
+- `-d` to only execute the downloads
+- `-i` to only generate the intermediate files (existing initial downloads are needed)
+- `-c` to only generate the constraints (existing intermediate files are needed)
+- `-s` to pass the configuration file to the scripts requiring it
+
+The script can be overrun by executing specific step scripts as follow:
 
     ./download.sh <config-file>
 
@@ -46,8 +53,8 @@ To use FunTaxIS-lite with a specific step script run the script as follow:
 Where
 
 - `download.sh` downloads the latest release of all the files required by FunTaxIS-lite, if the user not specify the required file paths or the files are not found.
-- `generate_all_taxon_constraints.sh` generates all the taxonomic constraints for the species that have at least one annotation (if the GOA is used) or a taxonomic constraint is defined (if the consortium data is used). The script can be run if the GO, GOA, and taxonomy data exist.
-- `generate_species_taxon_constraints.sh` generates the taxonomic constraints of a list of user-selected species. It can be run either after the `generate_all_taxon_constraints.sh` script or if the required intermediate files exist.
+- `generate_intermediates.sh` generates all the taxonomic constraints for the species that have at least one annotation (if the GOA is used) or a taxonomic constraint is defined (if the consortium data is used). The script can be run if the GO, GOA, and taxonomy data exist.
+- `generate_constraints.sh` generates the taxonomic constraints of a list of user-selected species. It can be run either after the `generate_all_taxon_constraints.sh` script or if the required intermediate files exist.
 - `config-file` is the configuration file. (`config_file.cfg` in this repository.)
 
 The `launcher.sh` is used inside the container to correctly run one of the above scripts.
