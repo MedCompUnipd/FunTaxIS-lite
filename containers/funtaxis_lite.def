@@ -6,10 +6,12 @@ Stage: build
 %setup
     mkdir -p /funtaxis-lite/src/
     mkdir -p /funtaxis-lite/input/add_files/
-
+    mkdir -p /funtaxis-lite/input/go/
+    mkdir -p /funtaxis-lite/input/goa/
+    mkdir -p /funtaxis-lite/input/taxonomy/
 
 %files
-    ../add_files/* /funtaxis-lite/input/add_files/
+    ../input/add_files/* /funtaxis-lite/input/add_files/
     ../src/* /funtaxis-lite/src/
     ../*.sh /funtaxis-lite/
 
