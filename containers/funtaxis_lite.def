@@ -5,11 +5,11 @@ Stage: build
 
 %setup
     mkdir -p /funtaxis-lite/src/
-    mkdir -p /funtaxis-lite/add_files/
+    mkdir -p /funtaxis-lite/input/add_files/
 
 
 %files
-    ../add_files/* /funtaxis-lite/add_files/
+    ../add_files/* /funtaxis-lite/input/add_files/
     ../src/* /funtaxis-lite/src/
     ../*.sh /funtaxis-lite/
 
@@ -25,7 +25,7 @@ Stage: build
 
 
 %runscript
-    bash /funtaxis-list/launcher.sh "@"
+    bash /funtaxis-lite/container/launcher.sh "@"
 
 %test
 	python3 --version
@@ -33,7 +33,7 @@ Stage: build
 
 
 %labels
-    Author Davide
+    Author Bianca, Ispano, Gazzola
     Version v1.0
     MyLabel FunTaxIS-lite
 
