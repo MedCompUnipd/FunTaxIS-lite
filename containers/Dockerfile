@@ -1,7 +1,7 @@
 FROM python:3-alpine
 
 ADD ../*.sh /funtaxis-lite/
-ADD ../add_files/ /funtaxis-lite/input/add_files/
+ADD ../input/add_files/ /funtaxis-lite/input/add_files/
 ADD ../src/ /funtaxis-lite/src/
 
 RUN apk add bash build-base \
