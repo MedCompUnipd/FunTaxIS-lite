@@ -76,14 +76,14 @@ However, it can be overrun by executing specific step scripts. If you just want 
       
     ./download.sh config_file.cfg
 
-if you've already downloaded the goa, go and taxonomy files or you want to generate constraints starting from different releases of goa, go and taxonomy, you can skip the download script and run the pipeline with one of the following command:
+If you've already downloaded the goa, go and taxonomy files or you want to generate constraints starting from different releases of goa, go and taxonomy, you can skip the download script and run the pipeline with one of the following command:
 
     ./run.sh -i -s config_file.cfg
     
     ./generate_intermediates.sh config_file.cfg
 
 
-./generate_species_taxon_constraints.sh <config-file>
+./generate_constraints.sh <config-file>
 
 
 ## Containers
