@@ -65,26 +65,30 @@ with options:
 - `-c` to only generate the constraints (existing intermediate files are needed)
 - `-s` to pass the configuration file to the scripts requiring it (mandatory)
 
-For example, if you want to run the whole pipeline, including downloading the latest release of GOA, GO and taxonomy, run the script as follow:
+For example, if you want to run the whole pipeline, including downloading the latest release of goa, go and taxonomy, run the script as follow:
 
     ./run.sh -f -s config_file.cfg
 
 `run.sh` executes `download.sh`, `generate_intermediates.sh` and `generate_constraints.sh` in order. 
-However, it can be overrun by executing specific step scripts. If you just want to download goa, go and taxonomy, run one of the following command:
+However, it can be overrun by executing specific step scripts. If you just want to download goa, go and taxonomy, run one of the following commands:
 
     ./run.sh -d -s config_file.cfg 
       
     ./download.sh config_file.cfg
 
-If you've already downloaded the goa, go and taxonomy files or you want to generate constraints starting from different releases of goa, go and taxonomy, you can skip the download script and run the pipeline with one of the following command:
+If you've already downloaded the goa, go and taxonomy files or you want to generate constraints starting from different releases of goa, go and taxonomy, you can skip the download script and run the pipeline with one of the following commands:
 
     ./run.sh -i -s config_file.cfg
     
     ./generate_intermediates.sh config_file.cfg
 
+Finally, if you've already generated the intermediate files and you just need to generate taxon constraints, you can just run the last script using one of the following commands:
+    
+    ./run.sh -c -s config_file.cfg
+    
+    ./generate_constraints.sh config_file.cfg
 
-./generate_constraints.sh <config-file>
-
+NOTE: The intermediate files strictly depends on goa,go and taxonomy releases. If you use different releases you have to regenerate the intermediate files before generate constraints!
 
 ## Containers
 
