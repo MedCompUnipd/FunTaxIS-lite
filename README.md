@@ -73,11 +73,11 @@ The script `run.sh` executes `download.sh`, `generate_intermediates.sh` and `gen
 
     if you just want to download goa, go and taxonomy, run one of the following command:
 
-    ./run.sh -d -s config_file.cfg or  ./download.sh config_file.cfg
+      ./run.sh -d -s config_file.cfg or  ./download.sh config_file.cfg
 
-    ./generate_all_taxon_constraints.sh <config-file>
+./generate_all_taxon_constraints.sh <config-file>
 
-    ./generate_species_taxon_constraints.sh <config-file>
+./generate_species_taxon_constraints.sh <config-file>
 
 
 ## Containers
