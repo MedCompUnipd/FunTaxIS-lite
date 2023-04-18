@@ -44,7 +44,6 @@ This repository contains four scripts, three folders and one configuration file 
 
 ## Usage
 Before running FunTaxIS-lite, allow all permission (rwx) on src folder by typing the following command:
-
 <code>chmod -R 777 src/ </code>
    
 Then you can run FunTaxIS-lite in two ways:
