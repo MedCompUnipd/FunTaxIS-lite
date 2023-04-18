@@ -17,6 +17,19 @@ Optional dependence is the following:
 The Beautiful Soup library is used to automatically get the new taxonomic ID when an ID writes in the taxonConstraintsDef.txt file is not found in the tree. Otherwise a warning is thrown.
 
 ## Usage
+This repository contains four scripts, three folders and one configuration file (that can be edited by the user):
+
+- `run.sh` to run FunTaxIS-lite;
+- `download.sh` to download the latest release of GOA, go.owl and taxonomy (required by FunTaxIS-lite). This files are saved in the input folder by default.
+- `generate_intermediates.sh` to generates the intermediate files (needed to generate taxonomic constraints). The script can be run if the GO, GOA, and taxonomy data exist.
+- `generate_constraints.sh` to generate the taxonomic constraints. It can be run either after the `generate_all_taxon_constraints.sh` script or if the required intermediate files exist.
+- /src folder, that contains the source code
+- /input folder, that contains the `add_files` folder with:
+      - excluded_nodes.txt
+      - manualConstraints.txt
+      - taxonConstraintsDef.txt
+- /containers, which contain
+
 
 Allow all permission (rwx) on src folder before running FunTaxIS-lite by typing the following command:
 
@@ -56,9 +69,6 @@ The script can be overrun by executing specific step scripts as follow:
 
 Where
 
-- `download.sh` downloads the latest release of all the files required by FunTaxIS-lite, if the user not specify the required file paths or the files are not found.
-- `generate_intermediates.sh` generates all the taxonomic constraints for the species that have at least one annotation (if the GOA is used) or a taxonomic constraint is defined (if the consortium data is used). The script can be run if the GO, GOA, and taxonomy data exist.
-- `generate_constraints.sh` generates the taxonomic constraints of a list of user-selected species. It can be run either after the `generate_all_taxon_constraints.sh` script or if the required intermediate files exist.
 - `config-file` is the configuration file. (`config_file.cfg` in this repository.)
 
 
