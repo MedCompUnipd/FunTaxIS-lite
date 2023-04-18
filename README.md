@@ -63,7 +63,7 @@ with options:
 - `-d` to only execute the downloads
 - `-i` to only generate the intermediate files (existing initial downloads are needed)
 - `-c` to only generate the constraints (existing intermediate files are needed)
-- `-s` to pass the configuration file to the scripts requiring it
+- `-s` to pass the configuration file to the scripts requiring it (mandatory)
 
 For example, if you want to run the whole pipeline, including downloading the latest release of GOA, GO and taxonomy, run the script as follow:
 
