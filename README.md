@@ -66,7 +66,6 @@ with options:
 - `-s` to pass the configuration file to the scripts requiring it (mandatory)
 
 For example, if you want to run the whole pipeline, including downloading the latest release of GOA, GO and taxonomy, run the script as follow:
-
     ./run.sh -f -s config_file.cfg
 
 The script `run.sh` executes the `download.sh`, `generate_intermediates.sh` and `generate_constraints.sh` scripts following the order. However, it can be overrun by executing specific step scripts as follow:
