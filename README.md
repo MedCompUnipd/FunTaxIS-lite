@@ -42,7 +42,7 @@ This repository contains four scripts, three folders and one configuration file 
     - `type`: the type of taxonomic constraints generated. Allowed values are `automatic`, `auto`, `a`, `manual`, `man`, and `m`. (Optional. Default: manual and automatic.)
     - `results`: the output files folder. (Mandatory.)
 
-## Info
+## Usage
 Allow all permission (rwx) on src folder before running FunTaxIS-lite by typing the following command:
 
 
