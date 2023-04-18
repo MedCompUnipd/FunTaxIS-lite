@@ -42,6 +42,10 @@ with options:
 - `-c` to only generate the constraints (existing intermediate files are needed)
 - `-s` to pass the configuration file to the scripts requiring it
 
+For example, if you want to run the whole pipeline, including downloading the latest release of GOA, GO and taxonomy, run the script as follow:
+
+    ./run.sh -f -s config_file.cfg
+
 The script can be overrun by executing specific step scripts as follow:
 
     ./download.sh <config-file>
@@ -56,6 +60,7 @@ Where
 - `generate_intermediates.sh` generates all the taxonomic constraints for the species that have at least one annotation (if the GOA is used) or a taxonomic constraint is defined (if the consortium data is used). The script can be run if the GO, GOA, and taxonomy data exist.
 - `generate_constraints.sh` generates the taxonomic constraints of a list of user-selected species. It can be run either after the `generate_all_taxon_constraints.sh` script or if the required intermediate files exist.
 - `config-file` is the configuration file. (`config_file.cfg` in this repository.)
+
 
 The `launcher.sh` is used inside the container to correctly run one of the above scripts.
 
