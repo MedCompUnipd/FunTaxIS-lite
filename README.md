@@ -88,7 +88,7 @@ Finally, if you've already generated the intermediate files and you just need to
     
     ./generate_constraints.sh config_file.cfg
 
-NOTE: The intermediate files strictly depends on goa,go and taxonomy releases. If you use different releases you have to regenerate the intermediate files before generate constraints!
+NOTE: The intermediate files strictly depends on goa, go and taxonomy releases. If you use different releases you have to regenerate the intermediate files before generate constraints!
 
 ## Containers
 
