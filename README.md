@@ -23,11 +23,11 @@ This repository contains four scripts, three folders and one configuration file 
 - `download.sh` to download the latest release of GOA, go.owl and taxonomy (required by FunTaxIS-lite). This files are saved in the input folder by default.
 - `generate_intermediates.sh` to generates the intermediate files (needed to generate taxonomic constraints). The script can be run if the GO, GOA, and taxonomy data exist.
 - `generate_constraints.sh` to generate the taxonomic constraints. It can be run either after the `generate_all_taxon_constraints.sh` script or if the required intermediate files exist.
-- `/src` folder, that contains the source code
-- `/input` folder, that contains the `add_files` folder with:
-    - excluded_nodes.txt
-    - manualConstraints.txt
-    - taxonConstraintsDef.txt
+- `/src`, which contains the source code
+- `/input`, which contains the required input files and the `add_files` folder with:
+    - `excluded_nodes.txt`
+    - `manualConstraints.txt`
+    - `taxonConstraintsDef.txt`
 - `/containers`, which contain
 
 
