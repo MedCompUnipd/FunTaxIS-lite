@@ -67,24 +67,24 @@ with options:
 
 For example, if you want to run the whole pipeline, including downloading the latest release of goa, go and taxonomy, run the script as follow:
 
-    ./run.sh -f -s config_file.cfg
+    ./run.sh -s config_file.cfg -f
 
 `run.sh` executes `download.sh`, `generate_intermediates.sh` and `generate_constraints.sh` in order. 
 However, it can be overrun by executing specific step scripts. If you just want to download goa, go and taxonomy, run one of the following commands:
 
-    ./run.sh -d -s config_file.cfg 
+    ./run.sh -s config_file.cfg -d 
       
     ./download.sh config_file.cfg
 
 If you've already downloaded the goa, go and taxonomy files or you want to generate constraints starting from different releases of goa, go and taxonomy, you can skip the download script and run the pipeline with one of the following commands:
 
-    ./run.sh -i -s config_file.cfg
+    ./run.sh -s config_file.cfg -i
     
     ./generate_intermediates.sh config_file.cfg
 
 Finally, if you've already generated the intermediate files and you just need to generate taxon constraints, you can just run the last script using one of the following commands:
     
-    ./run.sh -c -s config_file.cfg
+    ./run.sh -s config_file.cfg -c
     
     ./generate_constraints.sh config_file.cfg
 
