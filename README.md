@@ -43,13 +43,11 @@ This repository contains four scripts, three folders and one configuration file 
     - `results`: the output files folder. (Mandatory.)
 
 ## Usage
-Allow all permission (rwx) on src folder before running FunTaxIS-lite by typing the following command:
+Before running FunTaxIS-lite, allow all permission (rwx) on src folder by typing the following command:
 
-
-   <br> <code>chmod -R 777 src/ </code>
+<code>chmod -R 777 src/ </code>
    
-   
-<br> FunTaxIS-lite can be run in two ways:
+Then you can run FunTaxIS-lite in two ways:
 
 1.  Running the whole pipeline from scratch using one command
 2.  Running only the desired modules of the pipeline (using the `run.sh` script or by hand)
@@ -78,8 +76,6 @@ The script can be overrun by executing specific step scripts as follow:
     ./generate_all_taxon_constraints.sh <config-file>
 
     ./generate_species_taxon_constraints.sh <config-file>
-
-
 
 
 ## Containers
