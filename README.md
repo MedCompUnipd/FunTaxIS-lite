@@ -14,7 +14,7 @@ Optional dependence is the following:
 
  * [beautifulsoup4](https://pypi.org/project/beautifulsoup4/)
 
-The Beautiful Soup library is used to automatically get the new taxonomic ID when an ID writes in the taxonConstraintsDef.txt file is not found in the tree. Otherwise a warning is thrown.
+The Beautiful Soup library is used to automatically get the new taxonomic ID when an ID written in the taxonConstraintsDef.txt file is not found in the tree. Otherwise a warning is thrown.
 
 ## Info
 This repository contains four scripts, three folders and one configuration file (that can be edited by the user):
