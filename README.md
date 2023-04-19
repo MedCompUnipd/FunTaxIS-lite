@@ -106,7 +106,7 @@ or
 
 for Docker and Singularity respectively.
 
-After the container is builted, the container can be used with one of the following commands:
+After the container is built, it can be used with one of the following commands:
 
     docker run <image_name> [options] <config_file_path>
 
