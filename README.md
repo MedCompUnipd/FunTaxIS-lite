@@ -92,9 +92,9 @@ NOTE: The intermediate files strictly depends on goa, go and taxonomy releases. 
 
 ## Containers
 
-In the `containers` folder contains the [Docker](https://www.docker.com/) and [Singularity](https://sylabs.io/singularity/) definition files.
+The `containers` folder contains the [Docker](https://www.docker.com/) and [Singularity](https://sylabs.io/singularity/) definition files.
 
-The `launcher.sh` is used inside the container to correctly run one of the above scripts.
+`launcher.sh` is used inside the container to correctly run one of the above scripts.
 
 To build the container use one of the following commands (with root permission) inside the FunTaxIS-lite folder:
 
