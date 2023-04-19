@@ -35,7 +35,7 @@ This repository contains four scripts, three folders and one configuration file 
     - `goa`: the GOA file path. The file must be in GAF format. Without the parameter the script downloads the latest release of the Gene Ontology Annotation. (Optional. Default: GOA's latest release.)
     - `taxonomy`: the NCBI's taxonomy taxdump folder. Without the parameter the script downloads the latest release of the NCBI's taxonomy tree. (Optional. Default: Taxonomy's latest release.)
     - `taxon-def`: the taxonomy nodes ID list at species level and above used to define the taxonomic constraints. Without the parameter the script uses the taxonConstraintDef.txt file in add_files folder. (Optional. Default: use the taxonomy definition file in add_files folder.)
-    - `species`: the list of species of interest. Without the parameter the script uses the species.txt file in add_files folder. (Optional. Default: use the species file in add_files directory.)
+    - `species`: the list of species of interest. The user can modify this list at will by putting the taxonomic ID from the NCBI taxonomy database of the species      and/or branches of the taxonomy tree for which constraints are to be produced. Without this parameter the script uses the species.txt file in add_files folder. (Optional. Default: use the species file in add_files directory.)
     - `manual-constraints`: list of specific constraints that overrule the existing constraints. Without the parameter the script uses the manualConstraints.txt file in add_files folder. (Optional. Default: use the manual constratins file in add_files folder.)
     - `cutoff`: the GO's frequency threshold used to define constraints. (Optional. Default: 500)
     - `debug`: if true, maintains the intermediary files. Allowed values are `true`, `t`, `false`, and `f`. (Optional. Default: false.)
@@ -114,7 +114,7 @@ or
 
     singularity run <image_name> [options] <config_file_path>
 
-The available options are the following:
+The following options are available:
 * `-a`: to generate the taxonomic constraints of all the species found in the input data.
 * `-d`: to download all the necessary data to correctly run FunTaxIS-lite.
 * `-f`: to use the complete FunTaxIS pipeline.
