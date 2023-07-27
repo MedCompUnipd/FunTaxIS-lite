@@ -69,8 +69,8 @@
 4734	commelinids	unreliable	other	commelinids	clade
 186628	Characiphysae	unreliable	other	Characiphysae	superorder
 1118	Chroococcales	reliable	other	Chroococcales	order
-117571  Euteleostomi  reliable  other  Euteleostomi  clade
-1338369  Dipnotetrapodomorpha  unreliable  other Dipnotetrapodomorpha  clade
+117571	Euteleostomi	reliable	other	Euteleostomi	clade
+1338369	Dipnotetrapodomorpha	unreliable	other	Dipnotetrapodomorpha	clade
 72273	Thiotrichales	unreliable	other	Thiotrichales	order
 3699	Brassicales	reliable	other	Brassicales	order
 4055	Gentianales	unreliable	other	Gentianales	order
