@@ -70,7 +70,7 @@ with options:
 - `-c` to only generate the constraints (existing intermediate files are needed)
 - `-s` to pass the configuration file to the scripts requiring it (mandatory)
 
-For example, if you want to run the whole pipeline, including downloading the latest release of goa, go and taxonomy, run the script as follow:
+For example, if you want to run the whole pipeline, including downloading the latest release of goa, go and taxonomy, run the script <code> ./run.sh -s config_file.cfg </code> with <code>-f</code> option as follow:
 
     ./run.sh -s config_file.cfg -f
 
