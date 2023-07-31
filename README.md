@@ -43,6 +43,9 @@ This repository contains four scripts, three folders and one configuration file 
     - `results`: the output files folder. (Mandatory.)
 
 ## Usage
+Clone the repository on your own system or type the following command:
+
+<code> git clone https://github.com/MedCompUnipd/FunTaxIS-lite.git your_destination_path </code>
 Before running FunTaxIS-lite, allow all permission (rwx) on src folder by typing the following command:
 
 <code>chmod -R 750 src/ </code>
