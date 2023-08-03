@@ -246,7 +246,7 @@ def main(args):
                     ##END IF
                 for taxon in list_of_species:
                     anc = ancestors[taxon]
-                    if values[5] == 'Never in taxon':
+                    if values[5] == 'never in taxon':
                         #place a never_in for every child in the taxonomy tree
                         if taxon == values[3] or values[3] in anc:
                             go_temp_desc = go_owl.go_descendants_using_valid_edges(values[0])
@@ -306,7 +306,7 @@ def main(args):
                 line = line.strip()
                 values = line.split('\t')
                 listOfGO = go_owl.go_descendants_using_valid_edges(values[0])
-                if values[5] == 'Never in taxon':
+                if values[5] == 'never in taxon':
                     for taxon in list_of_species:
                         if taxon not in list_of_constraints_per_species_MANUAL:
                             list_of_constraints_per_species_MANUAL[taxon] = dict()

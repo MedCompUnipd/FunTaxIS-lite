@@ -49,31 +49,32 @@ def main(args):
                 sons = goowl.go_descendants(goParent)
                 details = goowl.go_single_details(goParent)
                 for index in constraints:
-                    if constraints[index]["rel"] == 'in taxon':
+                    relation = constraints[index]["rel"].replace('_',' ').lower()
+                    if relation == 'in taxon':
                         continue
-                    if constraints[index]["rel"] == 'Never in taxon':
+                    if relation == 'never in taxon':
                         if 'NEVER' not in goDict[goParent]:
                             goDict[goParent]['NEVER'] = dict()
-                        goDict[goParent]['NEVER'][constraints[index]["taxonId"]] = (constraints[index]["taxonId"],constraints[index]["taxonName"], goParent + "\t" + details["name"] + "\t" + details["namespace"] + "\tPLACEHOLDERID\tPLACEHOLDERNAME\t" + constraints[index]["rel"])
-                    elif constraints[index]["rel"] == 'only in taxon':
+                        goDict[goParent]['NEVER'][constraints[index]["taxonId"]] = (constraints[index]["taxonId"],constraints[index]["taxonName"], goParent + "\t" + details["name"] + "\t" + details["namespace"] + "\tPLACEHOLDERID\tPLACEHOLDERNAME\t" + relation)
+                    elif relation == 'only in taxon':
                         #### EVEN FOR IN do exactly what you do for NEVER than only one for that particular GO will be kept and is that with lower taxon
                         #### Union must be kept as is but when split if there is an ONLY IN with a species/class lower than one of the members of Union this will
                         #### replace it IMPORTANT .... taxa in Union are not in relationship father -> son so only in can survive for more than one.
                         if 'IN' not in goDict[goParent]:
                             goDict[goParent]['IN'] = dict()
-                        goDict[goParent]['IN'][constraints[index]["taxonId"]] = (constraints[index]["taxonId"],constraints[index]["taxonName"], goParent + "\t" + details["name"] + "\t" + details["namespace"] + "\tPLACEHOLDERID\tPLACEHOLDERNAME\t" + constraints[index]["rel"])
+                        goDict[goParent]['IN'][constraints[index]["taxonId"]] = (constraints[index]["taxonId"],constraints[index]["taxonName"], goParent + "\t" + details["name"] + "\t" + details["namespace"] + "\tPLACEHOLDERID\tPLACEHOLDERNAME\t" + relation)
                     if bool(sons):
                         for son in sons:
                             if son not in goDict:
                                 goDict[son] = dict()
-                            if constraints[index]["rel"] == 'Never in taxon':
+                            if relation == 'never in taxon':
                                 if 'NEVER' not in goDict[son]:
                                     goDict[son]['NEVER'] = dict()
-                                goDict[son]['NEVER'][constraints[index]["taxonId"]] = (constraints[index]["taxonId"],constraints[index]["taxonName"], son + "\t" + sons[son]["name"] + "\t" + sons[son]["namespace"] + "\tPLACEHOLDERID\tPLACEHOLDERNAME\t" + constraints[index]["rel"])
-                            elif constraints[index]["rel"] == 'only in taxon':
+                                goDict[son]['NEVER'][constraints[index]["taxonId"]] = (constraints[index]["taxonId"],constraints[index]["taxonName"], son + "\t" + sons[son]["name"] + "\t" + sons[son]["namespace"] + "\tPLACEHOLDERID\tPLACEHOLDERNAME\t" + relation)
+                            elif relation == 'only in taxon':
                                 if 'IN' not in goDict[son]:
                                     goDict[son]['IN'] = dict()
-                                goDict[son]['IN'][constraints[index]["taxonId"]] = (constraints[index]["taxonId"],constraints[index]["taxonName"], son + "\t" + sons[son]["name"] + "\t" + sons[son]["namespace"] + "\tPLACEHOLDERID\tPLACEHOLDERNAME\t" + constraints[index]["rel"])
+                                goDict[son]['IN'][constraints[index]["taxonId"]] = (constraints[index]["taxonId"],constraints[index]["taxonName"], son + "\t" + sons[son]["name"] + "\t" + sons[son]["namespace"] + "\tPLACEHOLDERID\tPLACEHOLDERNAME\t" + relation)
                             ##END IF
                         ##END FOR
                     ##END IF
