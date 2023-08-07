@@ -85,6 +85,7 @@ In alternative, you can use the <code>download.sh</code> script with the config 
 If you've already downloaded the goa, go and taxonomy files or you want to generate constraints starting from different releases of goa, go and taxonomy, you can skip the download script and run the pipeline with one of the following commands:
 
     ./run.sh -s config_file.cfg -i
+
     
     ./generate_intermediates.sh config_file.cfg
 
