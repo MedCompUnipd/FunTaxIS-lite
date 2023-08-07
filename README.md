@@ -77,9 +77,9 @@ For example, if you want to run the whole pipeline, including downloading the la
 `run.sh` executes `download.sh`, `generate_intermediates.sh` and `generate_constraints.sh` in order. 
 However, it can be overrun by executing specific step scripts. If you just want to download goa, go and taxonomy, run one of the following commands:
 
-    ./run.sh -s config_file.cfg -d 
-      
-    ./download.sh config_file.cfg
+    <code>./run.sh -s config_file.cfg -d </code> 
+      or
+    <code>./download.sh config_file.cfg</code>
 
 If you've already downloaded the goa, go and taxonomy files or you want to generate constraints starting from different releases of goa, go and taxonomy, you can skip the download script and run the pipeline with one of the following commands:
 
