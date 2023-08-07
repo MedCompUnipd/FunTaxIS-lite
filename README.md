@@ -93,7 +93,8 @@ Finally, if you've already generated the intermediate files and you just need to
     
     ./run.sh -s config_file.cfg -c
     
-    ./generate_constraints.sh config_file.cfg
+
+In alternative, you can use the <code>./generate_constraints.sh</code> script passing the configuration file as follow: <code>./generate_constraints.sh config_file.cfg </code>
 
 NOTE: The intermediate files strictly depends on goa, go and taxonomy releases. If you use different releases you have to regenerate the intermediate files before generate constraints!
 
