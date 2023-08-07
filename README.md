@@ -79,8 +79,8 @@ However, it can be overrun by executing specific step scripts. If you just want 
 
     ./run.sh -s config_file.cfg -d  
     
-In alternative, you can use this command:
-<code>./download.sh config_file.cfg </code>
+In alternative, you can use the <code>download.sh</code> script with the config file as follow:
+    <code>./download.sh config_file.cfg </code>
 
 If you've already downloaded the goa, go and taxonomy files or you want to generate constraints starting from different releases of goa, go and taxonomy, you can skip the download script and run the pipeline with one of the following commands:
 
