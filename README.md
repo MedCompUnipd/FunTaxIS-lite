@@ -79,15 +79,15 @@ However, it can be overrun by executing specific step scripts. If you just want 
 
     ./run.sh -s config_file.cfg -d  
     
-In alternative, you can use the <code>download.sh</code> script with the config file as follow:
+In alternative, you can use the <code>download.sh</code> script passing the configuration file as follow:
     <code>./download.sh config_file.cfg </code>
 
-If you've already downloaded the goa, go and taxonomy files or you want to generate constraints starting from different releases of goa, go and taxonomy, you can skip the download script and run the pipeline with one of the following commands:
+If you've already downloaded the goa, go and taxonomy files or you want to generate constraints starting from different releases of goa, go and taxonomy, you can skip the download script and run the pipeline with  the following commands:
 
     ./run.sh -s config_file.cfg -i
 
     
-    ./generate_intermediates.sh config_file.cfg
+In alternative, you can use the <code>./generate_intermediates.sh </code> script passing the configuration file as follow: <code>./generate_intermediates.sh config_file.cfg</code>
 
 Finally, if you've already generated the intermediate files and you just need to generate taxon constraints, you can just run the last script using one of the following commands:
     
