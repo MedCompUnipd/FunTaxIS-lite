@@ -167,7 +167,7 @@ verifyGoFilePresence "${go_folder}" "${real_path}" "${config_file}"
 verifyTaxonomyFilesPresence "${taxonomy_folder}" "${real_path}" "${config_file}"
 # Check if the gene ontology annotation is present only if the type of constraints isn't manual.
 case "${type}" in
-    "manual"|"m"|"man" ) ;;
+    "GOConsortium"|"goc"|"g" ) ;;
     * ) verifyGoaFilePresence "${goa_folder}" "${real_path}" "${config_file}"
 esac
 
