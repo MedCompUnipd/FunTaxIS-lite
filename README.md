@@ -58,9 +58,9 @@ Then you can run FunTaxIS-lite in two ways:
 
 To run FunTaxIS-lite use the `run.sh` script as follow:
 
-    ./run.sh <options>
+    ./run.sh -s <config_file.cfg> [OPTIONS]
 
-with options:
+[OPTIONS]:
 
 - `-h` for help message
 - `-f` to run the full pipeline
