@@ -55,7 +55,7 @@ while [[ $# -gt 0 ]]; do
         -s | --settings)
             shift
             if [[ $# -eq 0 ]]; then
-                echo "L'opzione -s richiede un argomento." >&2
+                echo "Option -s requires an argument." >&2
                 exit 1
             fi
             setting="$1"
@@ -65,7 +65,7 @@ while [[ $# -gt 0 ]]; do
             break
             ;;
         *)
-            echo "Opzione non valida: $1" >&2
+            echo "Invalid option: $1" >&2
             usage
             ;;
     esac
