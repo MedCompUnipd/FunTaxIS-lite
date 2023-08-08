@@ -110,16 +110,8 @@ int_file_folder="${base_folder}intermediate_files/" # It's the folder where the 
 cut_off="${config_array[cutoff]}" # It's the GO's frequency threshold used to define constraints. It's given by the parameter 'cutoff' in the configuration file. If not provided an empty string is saved.
 output_folder="${config_array[results]}/" # It's the results folder path. It's given by the parameter 'results' in the configuration file.
 type="${config_array[type]}" # It's the type of taxonomic constraints we want to be generated. It's given by the parameter 'type' in the configuration file. If not provided an empty string is saved and all the type (manual, automatic) are used.
-debug="${config_array[debug]}" # It's  the intermediate files are removed or not. It's given by the parameter 'debug' in the configuration file. If not provided an empty string is saved and the intermediate files are removed.
 used_go='' # It's the gene ontology file name.
 used_goa='goa_uniprot_all.gaf' # It's the gene ontology annotation file name.
-
-
-# Sets the debug value to the respective boolean value (false or true) using the setBoolean function.
-if [[ ${#debug} -ne 0 ]]
-then
-    setBoolean debug "${debug}"
-fi
 
 
 # Sets the taxonomy folder if not defined in the configuration file.
@@ -181,7 +173,7 @@ verifyGoFilePresence "${go_folder}"
 verifyTaxonomyFilesPresence "${taxonomy_folder}"
 # Check if the gene ontology annotation is present only if the type of constraints isn't manual.
 case "${type}" in
-    "manual"|"m"|"man" ) ;;
+    "GOConsortium"|"goc"|"g" ) ;;
     * ) verifyGoaFilePresence "${goa_folder}"
 esac
 
@@ -236,11 +228,3 @@ case "${type}" in
         -taxa "${taxonomy_folder}nodes.dmp" -names "${taxonomy_folder}names.dmp" -outdir "${output_folder}" -log "${int_file_folder}logfile.txt" -manual "${manual_constr_file}" \
         -owl "${go_folder}${used_go}" -partition "${tax_constr_def_file}" ;;
 esac
-
-
-# Maintain the intermediate files folder if the debug parameter is true. Otherwise, remove it.
-if [[ ${#debug} -ne 0 ]] && [ debug ]
-then
-    rm -r "${int_file_folder}"
-    #rm -r "${base_folder}input/"
-fi
