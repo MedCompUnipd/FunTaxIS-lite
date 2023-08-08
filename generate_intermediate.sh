@@ -211,6 +211,10 @@ case "${type}" in
 
     # Generate all files except purged GOA and GOAfreq.
     "fast"|"f"|"fst" )
+                         echo 'Calculate GO frequencies from purged GOA file' ;
+                         "${src_folder}"./GOAfreq.py -owl "${go_folder}${used_go}" -gaf_wo "${int_file_folder}goa_uniprot_all.gaf" \
+                         -out_freq "${int_file_folder}goa_uniprot_all_CumulFreq.txt" ;
+                         
                          echo 'Produce for each species the list of GO occurrences found' ;
                          "${src_folder}"./speciesToGO.py -gaf "${int_file_folder}goa_uniprot_all.gaf" -merge "${taxonomy_folder}merged.dmp" -taxa "${taxonomy_folder}nodes.dmp" \
                          -names "${taxonomy_folder}names.dmp" -out "${int_file_folder}speciesGOusage.txt" > "${int_file_folder}speciesGOusage_MISSING_taxon.txt" ;
@@ -232,7 +236,7 @@ case "${type}" in
                          -out "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN_reformat.txt" ;;
 
     # Generate only manual constraints using the data from the gene ontology consortium.
-    "manual"|"m"|"man" )
+    "GOConsortium"|"goc"|"g" )
                          echo 'Consider taxon constraints from consortium' ;
                          "${src_folder}"./taxonConstraintsGOconsortium.py -owl "${go_folder}${used_go}" -merge "${taxonomy_folder}merged.dmp" -taxa "${taxonomy_folder}nodes.dmp" -names "${taxonomy_folder}names.dmp" \
                          -out_constraints "${int_file_folder}constraintsCorrectNR_and_splitUnionNEW.txt" ;;

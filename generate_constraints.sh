@@ -219,7 +219,7 @@ fi
 # Only the taxonomic constraints of the choosed species are generated using the taxonomic constraints of the lowest ancestor of the species in exam defined in the $taxon_constr_def_file file.
 case "${type}" in
     # For each species in $species_list_file get the manual taxonomic constraints. 
-    "manual"|"m"|"man" ) echo 'Generate manual GO taxon constraints' ;
+    "GOConsortium"|"goc"|"g" ) echo 'Generate manual GO taxon constraints' ;
                          "${src_folder}"./createConstraintsMergedAndSpecific.py -go_const "${int_file_folder}constraintsCorrectNR_and_splitUnionNEW.txt" \
                          -list "${species_list_file}" -merge "${taxonomy_folder}merged.dmp" \
                          -taxa "${taxonomy_folder}nodes.dmp" -names "${taxonomy_folder}names.dmp" -outdir "${output_folder}" -log "${int_file_folder}logfile.txt" -manual "${manual_constr_file}" \
