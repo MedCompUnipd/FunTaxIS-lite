@@ -167,7 +167,7 @@ fi
 # Check if the gene ontology and the taxonomy files are present.
 verifyGoFilePresence "${go_folder}"
 verifyTaxonomyFilesPresence "${taxonomy_folder}"
-# Check if the gene ontology annotation is present only if the type of constraints isn't manual.
+# Check if the gene ontology annotation is present only if the type of constraints isn't "goc".
 case "${type}" in
     "GOConsortium"|"goc"|"g" ) ;;
     * ) verifyGoaFilePresence "${goa_folder}"
