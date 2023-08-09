@@ -2,7 +2,7 @@
 FunTaxIS-lite is a faster version of the [FunTaxIS](https://www.nature.com/articles/srep31971) algorithm. FunTaxIS-lite is a tool devised to define what are the protein functions that are allowed in all living organisms.To accomplish this task, the tool can infer taxon-based constraints applied to Gene Ontology (GO) terms, greatly extending and improving those provided by the GO consortium. The algorithm is based on a set of rules to explore and propagate the constraints at taxon hierarchy level and GO graph level respectively. Data are routinely extracted from the NCBI taxonomy database, available GO annotations in GOA database, and GO graph. The tool is aimed at improving automatic function prediction annotation algorithms filtering out potentially wrong annotations and to help in assessing the electronically inferred annotations (IEA) of the GOA database.
 ## Dependencies
 The required dependencies, to successfully run FunTaxIS-lite, are the following:
-
+* Python 3.9
 * C/C++ compiler
 * [Cython](https://pypi.org/project/Cython/)
 * [Owlready2](https://pypi.org/project/Owlready2/)
