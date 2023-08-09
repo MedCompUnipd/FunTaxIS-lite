@@ -45,7 +45,7 @@ This repository contains four scripts, three folders and one configuration file 
 ## Usage
 Clone the repository on your own system or type the following command:
 
-<code> git clone https://github.com/MedCompUnipd/FunTaxIS-lite.git <your_destination_path>.</code>
+<code> git clone https://github.com/MedCompUnipd/FunTaxIS-lite.git <your_destination_path></code>
 
 Go to FunTaxIS-lite folder. Before running FunTaxIS-lite, allow all permission (rwx) on the <code>src</code> folder by typing the following command:
 
