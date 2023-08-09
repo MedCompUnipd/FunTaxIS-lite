@@ -1,5 +1,5 @@
 #!/bin/bash
-
+chmod -R 750 src/
 intermediate=0
 download=0
 full=0
@@ -85,23 +85,19 @@ done
 # ...
 
 if [ ${full} -eq 1 ]; then
-    chmod -R 750 ./src
     bash ./download.sh "$setting"
     bash ./generate_intermediate.sh "$setting"
     bash ./generate_constraints.sh "$setting"
 else
     if [ ${download} -eq 1 ]; then
-        chmod -R 750 ./src
         bash ./download.sh "$setting"
     fi
 
     if [ ${intermediate} -eq 1 ]; then
-        chmod -R 750 ./src
         bash ./generate_intermediate.sh "$setting"
     fi
 
     if [ ${constraints} -eq 1 ]; then
-        chmod -R 750 ./src
         bash ./generate_constraints.sh "$setting"
     fi
 fi
