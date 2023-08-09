@@ -1,5 +1,5 @@
 #!/bin/bash
-
+chmod -R 750 src/
 intermediate=0
 download=0
 full=0
