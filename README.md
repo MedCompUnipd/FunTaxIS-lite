@@ -47,16 +47,8 @@ Clone the repository on your own system or type the following command:
 
 <code> git clone https://github.com/MedCompUnipd/FunTaxIS-lite.git <your_destination_path></code>
 
-Go to FunTaxIS-lite folder. Before running FunTaxIS-lite, allow all permission (rwx) on the <code>src</code> folder by typing the following command:
-
-<code>chmod -R 750 src/ </code>
-   
-Then you can run FunTaxIS-lite in two ways:
-
-1.  Running the whole pipeline from scratch using one command
-2.  Running only the desired modules of the pipeline (using the `run.sh` script or by hand)
-
-To run FunTaxIS-lite use the `run.sh` script as follow:
+Go to FunTaxIS-lite folder. 
+Then you can run FunTaxIS-lite as follow:
 
     ./run.sh -s <config_file.cfg> [OPTIONS]
 
