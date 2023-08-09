@@ -87,7 +87,7 @@ function verifyTaxonomyFilesPresence() {
     if [ ! -d "$1" ]
     then
         mkdir -p "$1"
-        dl_and_decompress "${taaxon_dl_site}" "$1"
+        dl_and_decompress "${taxon_dl_site}" "$1"
     elif [ $count -eq 0 ]
     then
         dl_and_decompress "${taxon_dl_site}" "$1"
