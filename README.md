@@ -123,4 +123,4 @@ The following options are available:
 - `-c` to only generate the constraints (existing intermediate files are needed)
 - `-s` to pass the configuration file to the scripts requiring it (mandatory)
 
-Be mindful to be coherent with the bound path (specified in the `-v`option in docker and `--bind` option in singularity) when passing <image_name> and <config_file_path> to the command line. The same applies to the paths specified inside the configuration file (see template `image_config_file.cfg` inside the `containers` folder
+Be mindful to be coherent with the bound path (specified in the `-v`option in docker and `--bind` option in singularity) when passing <config_file_path> to the command line. The same applies to the paths specified inside the configuration file (see template `image_config_file.cfg` inside the `containers` folder
