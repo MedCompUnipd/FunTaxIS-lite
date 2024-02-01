@@ -107,11 +107,11 @@ for Docker and Singularity respectively.
 
 After the container is built, it can be used with one of the following commands:
 
-    docker run <image_name> [options] <config_file_path>
+    docker run -v </path/to/FunTaxIS-lite/>:/funtaxis-lite/ <image_name> -s <config_file_path> [options]
 
 or
 
-    singularity run --bind </path/to/FunTaxIS-lite/>:/funtaxis-lite/ <image_name> [options] <config_file_path>
+    singularity run --bind </path/to/FunTaxIS-lite/>:/funtaxis-lite/ <image_name> -s <config_file_path> [options] 
 
 
 The following options are available:
@@ -122,4 +122,4 @@ The following options are available:
 - `-c` to only generate the constraints (existing intermediate files are needed)
 - `-s` to pass the configuration file to the scripts requiring it (mandatory)
 
-Be mindful to be coherent with the bound path specified in the `--bind` option when passing to singularity <image_name> and <config_file_path>. The same applies to the paths specified inside the configuration file (see template `singularity_configuration_file.cfg` inside the `containers` folder
+Be mindful to be coherent with the bound path (specified in the `-v`option in docker and `--bind` option in singularity) when passing <image_name> and <config_file_path> to the command line. The same applies to the paths specified inside the configuration file (see template `image_config_file.cfg` inside the `containers` folder
