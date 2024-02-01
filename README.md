@@ -101,6 +101,7 @@ To build the container use one of the following commands (with root permission) 
 
 or
 
+    cd containers
     singularity build -F <image_name> <definition_file_path>
 
 for Docker and Singularity respectively.
