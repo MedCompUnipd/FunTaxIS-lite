@@ -30,7 +30,7 @@ Stage: build
     bash /funtaxis-lite/containers/launcher.sh "@"
 
 %test
-	python3 --version
+    python3 --version
     python3 -c 'import argparse, owlready2, bs4'
 
 
