@@ -6,6 +6,7 @@ download=0
 full=0
 constraints=0
 setting=""
+chmod +x /funtaxis-lite/src/*
 
 # Usage
 usage() {
