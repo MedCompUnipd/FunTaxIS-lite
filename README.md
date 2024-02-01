@@ -97,7 +97,7 @@ The `containers` folder contains the [Docker](https://www.docker.com/) and [Sing
 
 To build the container use one of the following commands (with root permission) inside the FunTaxIS-lite folder:
 
-    docker build -t <image_name> -f <dockerfile_path>
+    docker build -t <image_name> -f <dockerfile_path> .
 
 or
 
