@@ -110,7 +110,9 @@ After the container is built, it can be used with one of the following commands:
     docker run <image_name> [options] <config_file_path>
 
 or
+
     singularity run --bind </path/to/FunTaxIS-lite/>:/funtaxis-lite/ <image_name> [options] <config_file_path>
+
 
 The following options are available:
 - `-h` for help message
