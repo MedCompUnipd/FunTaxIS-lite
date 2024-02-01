@@ -27,7 +27,7 @@ Stage: build
 
 
 %runscript
-    bash /funtaxis-lite/containers/launcher.sh "@"
+    bash /funtaxis-lite/containers/launcher.sh "$@"
 
 %test
     python3 --version

@@ -1,31 +1,61 @@
 #!/bin/bash
 
-option='f'
-opt_tag=''
+# Default options
+intermediate=0
+download=0
+full=0
+constraints=0
+setting=""
+
+# Usage
+usage() {
+    echo 'dopo'
+}
+
+[ $# -eq 0 ] && usage
 
 # Options parser
-while getopts ':i:d:f:c:' opt
-do
-    case ${opt}
-    in
-        i) option='i'; opt_tag=${OPTARG};;
-        d) option='d'; opt_tag=${OPTARG};;
-        f) option='f'; opt_tag=${OPTARG};;
-        c) option='c'; opt_tag=${OPTARG};;
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -h | --help) usage;;
+        -i | --intermediate) intermediate=1;;
+        -d | --download) download=1;;
+        -f | --full) full=1;;
+        -c | --constraints) constraints=1;;
+        -s | --settings)
+            shift
+            if [[ $# -eq 0 ]]; then
+                echo "Option -s requires an argument." >&2
+                exit 1
+            fi
+            setting="$1"
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            echo "Invalid option: $1" >&2
+            usage
+            ;;
     esac
+    shift
 done
 
-# Based on the case run a specific script
-case ${option}
-in
-    i) bash ../generate_intermediate.sh "${opt_tag}";;
-    d) bash ../download.sh "${opt_tag}";;
-    f) bash ../run.sh "${opt_tag}";;
-    c) bash ../generate_constraints.sh "${opt_tag}";;
-    *) echo 'Wrong option. Available options are:';\
-       echo '-i: to generate the taxonomic constraints of all the species found in the input data.';\
-       echo '-d: to download all the necessary data to correctly run FunTaxIS-lite.';\
-       echo '-f: to use the complete FunTaxIS pipeline.';\
-       echo '-c: to generate the taxonomic constraints of the species chosen by the user.';\
-       echo 'The configuration file must be passed as argument after the selected options.';;
-esac
+if [ ${full} -eq 1 ]; then
+    bash /funtaxis-lite/download.sh "$setting"
+    bash /funtaxis-lite/generate_intermediate.sh "$setting"
+    bash /funtaxis-lite/generate_constraints.sh "$setting"
+else
+    if [ ${download} -eq 1 ]; then
+        bash /funtaxis-lite/download.sh "$setting"
+    fi
+
+    if [ ${intermediate} -eq 1 ]; then
+        bash /funtaxis-lite/generate_intermediate.sh "$setting"
+    fi
+
+    if [ ${constraints} -eq 1 ]; then
+        bash /funtaxis-lite/generate_constraints.sh "$setting"
+    fi
+fi
