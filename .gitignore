@@ -1,2 +1,4 @@
 containers/funtaxis.sif
 input
+intermediate_files
+src/__pycache__
