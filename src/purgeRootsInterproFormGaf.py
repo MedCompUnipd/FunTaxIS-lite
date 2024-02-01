@@ -4,10 +4,10 @@
 # Name:        purgeRootsInterproFromGaf.py
 # Purpose:     discard roots and optionally roots
 #
-# Author:      stefa
+# Author:      Stefano
 #
 # Created:     01/07/2019
-# Copyright:   (c) stefa 2019
+# Copyright:   (c) Stefano 2019
 # Licence:     GPL
 #-------------------------------------------------------------------------------
 

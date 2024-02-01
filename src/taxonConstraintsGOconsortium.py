@@ -4,10 +4,10 @@
 # Name:        taxonConstraintsGOconsortium.py
 # Purpose:     Extract Taxonomic Constraints from GO owl ontology
 #
-# Author:      stefa
+# Author:      Stefano
 #
 # Created:     28/12/2019
-# Copyright:   (c) stefa 2019
+# Copyright:   (c) Stefa 2019
 # Licence:     GPL
 #-------------------------------------------------------------------------------
 

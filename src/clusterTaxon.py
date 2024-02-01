@@ -6,10 +6,10 @@
 #              the partitioning of the taxonomy is provided as a hand made file
 #              taxonConstraintsDef.txt - requires the output of speciesToGO.py
 #
-# Author:      stefano
+# Author:      Stefano
 #
 # Created:     19/07/2019
-# Copyright:   (c) stefano 2019
+# Copyright:   (c) Stefano 2019
 # Licence:     GPL
 #-------------------------------------------------------------------------------
 

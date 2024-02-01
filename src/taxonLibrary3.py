@@ -2,10 +2,10 @@
 # Name:        Taxon library
 # Purpose:     parsing nodes.dmp Taxonomy from NCBI
 #
-# Author:      stefano - emilio - ermanno
+# Author:      Stefano - Emilio - Ermanno
 #
 # Created:     21/01/2022
-# Copyright:   (c) stefano 2019
+# Copyright:   (c) Stefano 2019
 # Licence:     GPL
 # -------------------------------------------------------------------------------
 

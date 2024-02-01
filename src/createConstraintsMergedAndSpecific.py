@@ -7,10 +7,10 @@
 #              for each species specified in a file (option -list).
 #              Store result in a directory (-outdir)
 #
-# Author:      stefano
+# Author:      Stefano
 #
 # Created:     02/01/2020
-# Copyright:   (c) stefano 2019
+# Copyright:   (c) Stefano 2019
 # Licence:     GPL
 #-------------------------------------------------------------------------------
 

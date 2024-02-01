@@ -5,10 +5,10 @@
 # Purpose:     Parser of taxon to produce for each species the list of GO
 #              frequencies found
 #
-# Author:      stefano
+# Author:      Stefano
 #
 # Created:     05/07/2019
-# Copyright:   (c) stefano 2019
+# Copyright:   (c) Stefano 2019
 # Licence:     GPL
 #-------------------------------------------------------------------------------
 

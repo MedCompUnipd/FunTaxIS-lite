@@ -3,6 +3,7 @@
 from taxonLibrary3 import *
 import argparse
 
+
 def main():
     nodes = []
     taxa = Taxon(args['taxa'],args['merge'],args['names'])

@@ -5,10 +5,10 @@
 # Purpose:     output file containining statistics: 1) GO cumulated
 #              frequencies in GOA, 2) GO occurrences
 #
-# Author:      stefa
+# Author:      Stefano
 #
 # Created:     01/07/2019
-# Copyright:   (c) stefa 2019
+# Copyright:   (c) Stefano 2019
 # Licence:     GPL
 #-------------------------------------------------------------------------------
 

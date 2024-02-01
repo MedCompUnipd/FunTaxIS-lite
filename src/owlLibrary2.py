@@ -3,11 +3,11 @@
 #  Name:        GoOwl library
 #  Purpose:     parsing go-plus.owl file
 #
-#  Author:      stefano
+#  Author:      Stefano
 #
 #  Created:     21/05/2019
 #  Last modified: 22/07/2021
-#  Copyright:   (c) stefano 2019
+#  Copyright:   (c) Stefano 2019
 #  Licence:     GPL
 #  -------------------------------------------------------------------------------
 
