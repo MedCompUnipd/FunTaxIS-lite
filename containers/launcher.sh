@@ -10,7 +10,13 @@ chmod +x /funtaxis-lite/src/*
 
 # Usage
 usage() {
-    echo 'dopo'
+    echo "Usage: $0 -s/--settings [CONFIG_FILE] [OPTIONS]"
+    echo "-h | --help: print this help message"
+    echo "-s | --settings: specify the path to the configuration file (MANDATORY)"
+    echo "-d | --download: downloads the data needed to run the subsequent pipeline steps"
+    echo "-i | --intermediate: creates the intermediate files using existing data (either downloaded or specified by user in the config file)"
+    echo "-c | --constraints: computes the taxonomic constraints using existing intermediate files"
+    echo "-f | --full: executes the whole FunTaxIS-lite pipeline"
 }
 
 [ $# -eq 0 ] && usage

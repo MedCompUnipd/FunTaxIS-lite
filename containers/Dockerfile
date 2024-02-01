@@ -1,8 +1,9 @@
 FROM python:3-alpine
 
 ADD ../*.sh /funtaxis-lite/
-ADD ../input/add_files/ /funtaxis-lite/input/add_files/
-ADD ../src/ /funtaxis-lite/src/
+ADD ../input/add_files /funtaxis-lite/input/
+ADD ../src/* /funtaxis-lite/src/
+ADD ../containers/launcher.sh /funtaxis-lite/containers/
 
 RUN apk add bash build-base \
    && python -m pip install --upgrade pip \
