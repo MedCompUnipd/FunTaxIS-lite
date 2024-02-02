@@ -3,3 +3,4 @@ input
 intermediate_files
 output
 src/__pycache__
+*.txt
