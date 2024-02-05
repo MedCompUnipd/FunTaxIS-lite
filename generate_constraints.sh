@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # Function to transform a string to boolean and save the value in a variable.
 # Parameters:
 #  $1: the variable.
