@@ -108,11 +108,11 @@ for Docker and Singularity respectively.
 
 After the container is built, it can be used with one of the following commands:
 
-    docker run -v </path/to/FunTaxIS-lite/>:/funtaxis-lite/ <image_name> -s <config_file_path> [options]
+    docker run -v </path/to/FunTaxIS-lite/>:/data/ <image_name> -s <config_file_path> [options]
 
 or
 
-    singularity run --bind </path/to/FunTaxIS-lite/>:/funtaxis-lite/ <image_name> -s <config_file_path> [options] 
+    singularity run --bind </path/to/FunTaxIS-lite/>:/data/ <image_name> -s <config_file_path> [options] 
 
 
 The following options are available:
@@ -122,7 +122,12 @@ The following options are available:
 - `-i` to only generate the intermediate files (existing initial downloads are needed)
 - `-c` to only generate the constraints (existing intermediate files are needed)
 - `-s` to pass the configuration file to the scripts requiring it (mandatory)
+
   
-<b>NOTE:</b> when using singularity/docker, you must specify a binding option (--bind for singularity / -v for docker) in order for the container to properly work.  
-<b>NOTE:</b> when using singularity/docker, call the image using <b>your local machine path</b> and pass the configuration file using the <b>binded container path</b>  
-<b>NOTE:</b> when using singularity/docker, the path specified inside the configuration file must be coherent with the binding option (see containers/image_config_file.cfg as a template)
+<b>IMPORTANT FOR RUNNING FUNTAXIS-LITE VIA DOCKER/SINGULARITY<b/>  
+* <b>Directories tree:<b/> I/O operations are run inside the `/data/` folder mounted inside the container, which must be binded to the appropriate path in your local machine. The three sub-directories expected are `/data/inputs/`, `/data/intermediate_files/` and `/data/output`. For further option-specific details, continue reading.
+* `-d` Creates inside `/data/inputs/` the sub-directories `/data/inputs/go/`, `/data/inputs/goa/` and `/data/inputs/taxonomy/`, where are downloaded respectively the latest available `go-plus.owl`, `goa_uniprot_all.gaf` and taxonomic tree.
+* `-i` Uses files from `/data/inputs/go/`, `/data/inputs/goa/`, `/data/inputs/taxonomy/` (either previously downloaded or manually put by the user in the correct sub-directories) and from `/data/inputs/add_files/`. This last folder must contain the files listed in the <b>INFO<b/> section, which can be customized by the user at need. Writes files to `/data/intermediate_fiels/`.
+* `-c` Uses files from `/data/intermediate_fiels/` and from `/data/inputs/add_files/` (the same logic as for the previous option applies here). Writes data to `/data/outputs/` as per indication inside the configuration file.
+* `-f` Runs the full pipeline, and is equal to running consequentially all the previous options, therefore all the above considerations apply here.
+* <b>Configuration file:<b/> Directories and files to read from (and write to) can be customized at will by the user, but consistency must hold between the above described sub-directories structure and the chosen paths/files. Always mind that when using sungularity/docker all paths inside the configuration file must be passed as absolute paths with root directory `/data/`, to which must be binded an appropriate directory of the local file system.
