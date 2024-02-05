@@ -123,6 +123,6 @@ The following options are available:
 - `-c` to only generate the constraints (existing intermediate files are needed)
 - `-s` to pass the configuration file to the scripts requiring it (mandatory)
 
-<b>NOTE:</b> when using singularity/docker, you must specify a binding option (--bind for singularity / -v for docker) in order for the container to properly work.
-<b>NOTE:</b> when using singularity/docker, call the image using <b>your local machine path</b> and pass the configuration file using the <b>binded container path</b>
-<b>NOTE:</b> when using singularity/docker, the path specified inside the configuration file must be coherent with the binding option (see containers/image_config_file.cfg as a template)
+* <b>NOTE:</b> when using singularity/docker, you must specify a binding option (--bind for singularity / -v for docker) in order for the container to properly work.
+* <b>NOTE:</b> when using singularity/docker, call the image using <b>your local machine path</b> and pass the configuration file using the <b>binded container path</b>
+* <b>NOTE:</b> when using singularity/docker, the path specified inside the configuration file must be coherent with the binding option (see containers/image_config_file.cfg as a template)
