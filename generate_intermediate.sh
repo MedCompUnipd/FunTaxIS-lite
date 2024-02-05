@@ -85,7 +85,11 @@ done < $1
 
 # Variables
 real_path="$(dirname $(realpath $0))" # Get the run.sh script path.
-src_folder="${real_path}/src/" # The python script folder.
+if [ "$#" -eq 2]; then
+    src_folder="$2"
+else
+    src_folder="${real_path}/src/" # The python script folder.
+fi
 base_folder="${config_array[folder]}" # it's the path where all the files are saved. It's the path given by the parameter 'folder' in the configuration file.
 go_folder="${config_array[go]}" # It's the gene ontology file path. It's the path given by the parameter 'go' in the configuration file. If not provided, an empty string is saved.
 goa_folder="${config_array[goa]}" # It's the gene ontology annotation file path. It's the path given by the parameter 'goa' in the configuration file. If not provided, an empty string is saved.

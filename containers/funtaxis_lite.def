@@ -5,13 +5,14 @@ Stage: build
 
 %setup
     mkdir -p /funtaxis-lite/src/
-    mkdir -p /funtaxis-lite/input/add_files/
-    mkdir -p /funtaxis-lite/input/go/
-    mkdir -p /funtaxis-lite/input/goa/
-    mkdir -p /funtaxis-lite/input/taxonomy/
+
+    mkdir -p /data/input/add_files/
+    mkdir -p /data/input/go/
+    mkdir -p /data/input/goa/
+    mkdir -p /data/input/taxonomy/
 
 %files
-    ../input/add_files/* /funtaxis-lite/input/add_files/
+    ../input/add_files/* /data/input/add_files/
     ../src/* /funtaxis-lite/src/
     ../*.sh /funtaxis-lite/
 
@@ -27,7 +28,7 @@ Stage: build
 
 
 %runscript
-    bash /funtaxis-lite/containers/launcher.sh "$@"
+    bash /funtaxis-lite/run.sh "$@"
 
 %test
     python3 --version
