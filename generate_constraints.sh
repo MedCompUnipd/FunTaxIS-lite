@@ -98,7 +98,7 @@ done < $1
 
 # Variables
 real_path="$(dirname $(realpath $0))" # Get the run.sh script path.
-if [ "$#" -eq 2]; then
+if [ "$#" -eq 2 ]; then
     src_folder="$2"
 else
     src_folder="${real_path}/src/" # The python script folder.
