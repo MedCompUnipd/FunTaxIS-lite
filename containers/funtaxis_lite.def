@@ -15,6 +15,7 @@ Stage: build
     ../input/add_files/* /data/input/add_files/
     ../src/* /funtaxis-lite/src/
     ../*.sh /funtaxis-lite/
+    ./*.sh /funtaxis-lite/
 
 
 %post
@@ -28,7 +29,7 @@ Stage: build
 
 
 %runscript
-    bash /funtaxis-lite/run.sh "$@"
+    bash /funtaxis-lite/launcher.sh "$@"
 
 %test
     python3 --version
