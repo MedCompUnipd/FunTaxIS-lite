@@ -5,11 +5,11 @@ Stage: build
 
 %setup
     mkdir -p /funtaxis-lite/src/
-
     mkdir -p /data/input/add_files/
     mkdir -p /data/input/go/
     mkdir -p /data/input/goa/
     mkdir -p /data/input/taxonomy/
+
 
 %files
     ../input/add_files/* /data/input/add_files/

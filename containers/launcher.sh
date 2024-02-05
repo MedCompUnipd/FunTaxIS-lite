@@ -19,6 +19,7 @@ usage() {
 
 [ $# -eq 0 ] && usage
 
+
 # Options parser
 while [[ $# -gt 0 ]]; do
     case "$1" in

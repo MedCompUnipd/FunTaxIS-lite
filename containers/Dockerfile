@@ -3,7 +3,6 @@ FROM python:3-alpine
 ADD ../*.sh /funtaxis-lite/
 ADD ../containers/launcher.sh /funtaxis-lite/
 ADD ../src/* /funtaxis-lite/src/
-
 ADD ../input/add_files /data/input/
 
 RUN apk add bash build-base \
