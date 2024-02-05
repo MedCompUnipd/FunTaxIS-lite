@@ -1,9 +1,10 @@
 FROM python:3-alpine
 
 ADD ../*.sh /funtaxis-lite/
-ADD ../input/add_files /funtaxis-lite/input/
+ADD ../containers/launcher.sh /funtaxis-lite/
 ADD ../src/* /funtaxis-lite/src/
-ADD ../containers/launcher.sh /funtaxis-lite/containers/
+
+ADD ../input/add_files /data/input/
 
 RUN apk add bash build-base \
    && python -m pip install --upgrade pip \
@@ -11,4 +12,4 @@ RUN apk add bash build-base \
    && pip3 install beautifulsoup4 \
    && pip3 install Owlready2
 
-ENTRYPOINT ["bash", "/funtaxis-lite/containers/launcher.sh"]
+ENTRYPOINT ["bash", "/funtaxis-lite/launcher.sh"]

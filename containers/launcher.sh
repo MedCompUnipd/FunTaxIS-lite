@@ -7,9 +7,6 @@ full=0
 constraints=0
 setting=""
 
-chmod +x /funtaxis-lite/src/*
-
-# Usage
 usage() {
     echo "Usage: $0 -s/--settings [CONFIG_FILE] [OPTIONS]"
     echo "-h | --help:          print this help message"
