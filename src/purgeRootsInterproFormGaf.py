@@ -4,59 +4,94 @@
 # Name:        purgeRootsInterproFromGaf.py
 # Purpose:     discard roots and optionally roots
 #
-# Author:      Stefano
+# Author:      Stefano, Emilio
 #
 # Created:     01/07/2019
+# Last edited: 08/02/2024
 # Copyright:   (c) Stefano 2019
 # Licence:     GPL
 #-------------------------------------------------------------------------------
 
-import sys, argparse, copy
+import sys
+import argparse
+import copy
 from owlready2 import *
 from owlLibrary2 import *
 
 
-def main(args):
+def get_args():
+    parser = argparse.ArgumentParser(description='Purge goa_uniprot_all.gaf from non-protein records and GO roots annotations. InterPro annotations (optional) are also discarded if -no_interpro option is used')
 
-    fout = open(args['gafout'], "w")
-    recorded = dict()
-    accid = ''
-    unclassified = set()
-    with open(args['unclass'], 'r') as inp:
+    parser.add_argument('-g', '--gaf', metavar='INPUT_FILE',  help='goa_uniprot_all.gaf file', required=True)
+    parser.add_argument('-o', '--gafout', metavar='OUTPUT_FILE',  help='purged GOA file output', required=True)
+    parser.add_argument('-u', '--unclass', metavar='INPUT_FILE', help='list of unclassified and environmental samples annotations above nodes with order rank to remove', required=False, default='', type=str)
+    parser.add_argument('-i', '--no_interpro', help='discard annotations from InterPro origin (OPTIONAL)', action='store_true')
+    parser.add_argument('-p', '--no_panther', help='discard annotations from PANTHER origin (OPTIONAL)', action='store_true')
+
+    return vars(parser.parse_args())
+
+
+def read_unclassified(unclass):
+    # when present, parse the unclassified species file and save them in a set
+    with open(unclass, 'r') as inp:
+        unclassified = set()
         for rows in inp:
             row = rows.split('\t')
             unclassified.add(row[0].strip())
-        #END FOR
-    #END WITH
-    with open (args['gaf']) as gaf:
+
+    return unclassified
+
+
+if __name__ == "__main__":
+    args = get_args()
+    gaf_in = args['gaf']
+    gaf_out = args['gafout']
+    unclass = args['unclass']
+    ipr = args['no_interpro']
+    pan = args['no_panther']
+
+    if not os.path.exists(gaf_in):
+        print(f'Input gaf file provided does not exist! Check: {gaf_in}', file=sys.stderr)
+        raise FileNotFoundError
+
+    out_file, out_path = os.path.split(gaf_out)
+    if not os.path.exists(gaf_out):
+        print(f'WARNING: output directory {out_path} does not exist and will be created', file=sys.stderr)
+        os.makedirs(path)
+
+    # retrieve set of unclassified species if the input is given
+    if unclass:
+        unclassified = read_unclassified(unclass)
+
+    with open (gaf_in, 'r') as gaf, open(gaf_out, 'w') as fout:
         for line in gaf:
             if line.startswith('!'):
+                # skip the header
                 continue
-            #END IF
-            values = line.split("\t")
-            value = values[12].split('|')
-            valu = value[0].split(':')
-            val = valu[1].strip()
+
+            values = line.strip().split("\t")
+            # save the taxonomy assigned to the current line's annotations, accounting for the syntax of this particular field in the GAF file
+            tax = values[12].split('|')[0].split(':')[1]
+
             #keep only protein annotations
             if values[11] != "protein":
                 continue
-            ## END IF
+
             #remove root ontology terms annotations
-            if  values[3] == 'NOT' or values[4] == 'GO:0005575' or values[4] == 'GO:0008150' or values[4] == 'GO:0003674' or values[6] == 'ND':
+            if  values[4] == 'GO:0008150' or values[4] == 'GO:0003674' or values[4] == 'GO:0005575' or values[6] == 'ND' or values[3] == 'NOT':
                 continue
-            #END IF
+
             #remove entries from taxonomically unclassified organisms
-            if val in unclassified:
+            if tax in unclassified:
                 continue
-            #END IF
+
             #remove entries from InterPro database
-            if (args['no_interpro']):
+            if ipr:
                 if (values[14] == 'InterPro'):
                     continue
-                ##END IF
-            ##END IF
+
             #remove entries from PANTHER database
-            if (args['no_panther']):
+            if pan:
                 different_from = values[7].split('|')
                 status_panther = True
                 for i in different_from:
@@ -64,40 +99,5 @@ def main(args):
                         status_panther = False
                 if status_panther:
                     continue
-                ##END IF
-            ##END IF
-            if values[1] != accid:
-                if bool(recorded):
-                    for info in recorded:
-                        fout.write(recorded[info])
-                    ## END FOR
-                    recorded.clear()
-                ## END IF
-                accid = values[1]
-                recorded[(values[4],values[6])] = line
-            else:
-                recorded[(values[4],values[6])] = line
-            ## END IF
-        ## END FOR
-    ## END WITH
-    if bool(recorded):
-        for info in recorded:
-            fout.write(recorded[info])
-        ## END FOR
-    ## END IF
-    gaf.close()
-    fout.close()
-##END DEF
 
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Purge goa_uniprot_all.gaf from non-protein records and GO roots annotations. InterPro annotations (optional) are also discarded if -no_interpro option is used')
-    parser.add_argument('-gaf', metavar='INPUT_FILE',  help='goa_uniprot_all.gaf file', required=True)
-    parser.add_argument('-unclass', metavar='INPUT_FILE', help='list of unclassified and environmental samples annotations above nodes with order rank to remove', required=False)
-    parser.add_argument('-gafout', metavar='OUTPUT_FILE',  help='purged GOA file output', required=True)
-    parser.add_argument('-no_interpro', help='discard annotations from InterPro origin (OPTIONAL)', action='store_true', required=False)
-    parser.add_argument('-no_panther', help='discard annotations from PANTHER origin (OPTIONAL)', action='store_true', required=False)
-    args = vars(parser.parse_args())
-    main(args)
-#END MAIN
+            fout.write(line)
