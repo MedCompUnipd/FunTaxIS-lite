@@ -55,7 +55,7 @@ if __name__ == "__main__":
         raise FileNotFoundError
 
     out_path, basename = os.path.split(gaf_out)
-    if not os.path.exists(gaf_out):
+    if not os.path.exists(out_path):
         print(f'WARNING: output directory {out_path} does not exist and will be created', file=sys.stderr)
         os.makedirs(out_path)
 
@@ -82,7 +82,7 @@ if __name__ == "__main__":
                 continue
 
             #remove entries from taxonomically unclassified organisms
-            if tax in unclassified:
+            if unclass and tax in unclassified:
                 continue
 
             #remove entries from InterPro database
