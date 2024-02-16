@@ -1,41 +1,6 @@
 #!/bin/bash
 
 
-# Function to verify the presence of the gene ontology file. If not present, we download it.
-# Parameters:
-#   $1: the path where we save the gene ontology file.
-#   $2: the real path from the where this script is called
-#   $3: the configutation file
-verifyGoFilePresence() {
-    # Count the number of file with .owl extention.
-    count=$(ls -1 "$1"*.owl 2> /dev/null | wc -l)
-    if [ ! -d "$1" ]; then
-        mkdir -p "$1"
-    fi
-
-    if [ $count -eq 0 ]; then
-    	"$2/download.sh $3"
-    fi
-}
-
-
-# Function to verify the presence of the gene ontology annotation file. If not present, we download it.
-# Parameters:
-#   $1: the path where we save the gene ontology file.
-#   $2: the real path from the where this script is called
-#   $3: the configutation file
-verifyGoaFilePresence() {
-    # Count the number of file with .gaf extension.
-    count=$(ls -1 "$1"*.gaf 2> /dev/null | wc -l)
-    if [ ! -d "$1" ]; then
-        mkdir -p "$1"
-    fi
-
-    if [ $count -eq 0 ]; then
-        "$2/download.sh $3"
-    fi
-}
-
 # Function to verify the presence of the taxonomy tree files. If not present, we download it.
 # Parameters:
 #   $1: the path where we save the taxonomy tree files.
@@ -54,230 +19,317 @@ verifyTaxonomyFilesPresence() {
 }
 
 
-## Configuration file parser.
-declare -A config_array # Array declaration.
-
-config_file=$1
-
-if [[ ${#config_file} -eq 0 ]]
-then
-    echo 'Configuration file is required.'
-    exit 0
-fi
-
-IFS=":" # Internal Field Separator for the read command.
-# Read the configuration file.
-# Parameters:
-#  $1: the configuration file path.
-while read -r name v
-do
-    key=$(echo "${name}" | sed -e 's/^[ \t]*//')
-    value=$(echo "${v}" | sed -e 's/^[ \t]*//')
-
-    if [[ "$key" =~ ^#.*  ]] || [[ "$key" =~ ^--.* ]] || [[ ${#value} -eq 0 ]]
-    then
-       continue
-    fi
-
-    config_array+=( [$key]=$value )
-done < $1
-##
+# DEFAULT - HARD-CODED
+real_path="$(dirname $(realpath $0))"                                           # Get the run.sh script path.
+src_folder="${real_path}/src/"                                                  # Folder where to find all necessary python scripts
+used_go="go-plus.owl"                                                           # Filename for the OWL file.
+used_goa="goa_uniprot_all.gaf"                                                  # Filename for the GAF file.
+used_constr_def_file="taxonConstraintsDef.txt"
+used_unclassified_file="excluded_nodes.txt"
 
 
-# Variables
-real_path="$(dirname $(realpath $0))" # Get the run.sh script path.
-if [ "$#" -eq 2 ]; then
-    src_folder="$2"
-else
-    src_folder="${real_path}/src/" # The python script folder.
-fi
-base_folder="${config_array[folder]}"                       # it's the path where all the files are saved. It's the path given by the parameter 'folder' in the configuration file.
-go_folder="${config_array[go]}"                             # It's the gene ontology file path. It's the path given by the parameter 'go' in the configuration file. If not provided, an empty string is saved.
-goa_folder="${config_array[goa]}"                           # It's the gene ontology annotation file path. It's the path given by the parameter 'goa' in the configuration file. If not provided, an empty string is saved.
-taxonomy_folder="${config_array[taxonomy]}"                 # It's the taxonomy folder path, It's the path given by the parameter 'taxonomy' in the configuration file. If not provided, an empty string is saved.
-tax_constr_def_file="${config_array[taxon-def]}"            # It's the taxonomic definitions file path. It's the path given by the parameter 'taxon-def' in the configuration file. If not provided, an empty string is saved.
-species_list_file="${config_array[species]}"                # It's the list of species file path. It's the path given by the parameter 'species' in the configuration file. If not provided, an empty string is saved.
-manual_constr_file="${config_array[manual-constraints]}"    # It's the manual constraints definition file. It's given by the parameter 'manual-constratins' in the configuration file. If not provided, an empty string is saved.
-int_file_folder="${base_folder}intermediate_files/"         # It's the folder where the intermediate files are saved.
-cut_off="${config_array[cutoff]}"                           # It's the GO's frequency threshold used to define constraints. It's given by the parameter 'cutoff' in the configuration file. If not provided an empty string is saved.
-type="${config_array[type]}"                                # It's the type of taxonomic constraints we want to be generated. It's given by the parameter 'type' in the configuration file. If not provided an empty string is saved and all the type (manual, automatic) are used.
-used_go=''                                                  # It's the gene ontology file name.
-used_goa='goa_uniprot_all.gaf'                              # It's the gene ontology annotation file name.
-unclassified_file="${config_array[unclassified]}"           # list of unclassified and other nodes above order rank to remove their annotation contribution
+# DEFAULT - SOFT-CODED
+go_folder="${real_path}/input/go/"                                              # Folder where the OWL file is.
+goa_folder="${real_path}/input/goa/"                                            # Folder where the GAF file is.
+taxonomy_folder="${real_path}/input/taxonomy/"                                  # Folder where the taxonomy taxdump files are.
+add_files_folder="${real_path}/input/add_files/"                                # Folder where the desired add_files are.
+cut_off=500                                                                     # Default value for ...
+int_file_folder="${real_path}/intermediate_files/"                              # Folder where to create all necessary intermediate files.
+type="all"                                                                      # Mode for the FUnTaxIS-lite pipeline
 
 
-# Sets the taxonomy folder if not defined in the configuration file.
-if [[ ${#taxonomy_folder} -eq 0 ]]
-then
-   taxonomy_folder="${base_folder}input/taxonomy/"
-fi
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+        -w|--owl)
+            if [[ $# -gt 1 && ! $2 == -* ]]; then
+                if [ -f "$2" ]; then
+                    case "$2" in
+                        *go-plus.owl*) used_go=$(echo "$2" | awk -F/ '{print $NF}'); go_folder=${2%"${used_go}"} ;; # Extract the gene ontology file name and the path.
+                        *) echo 'ERROR: Gene ontology graph is not in the owl format or is not the plus version.'; usage;;
+                    esac
+                else
+                    owls=$(find "$2" -type f -name *go-plus.owl* 2> /dev/null |wc -l)
+                    if [ $owls -eq 1 ]; then
+                        used_go=$(find "$2" -type f -name *go-plus.owl* -printf "%f\n")
+                        go_folder="$2"
+                    elif [ $owls -eq 0]; then
+                        echo "Downloading go-plus.owl in the provided folder since it was empty"
+                        "${base_folder}/download.sh" -w "$2"
+                        used_go="go-plus.owl"
+                        go_folder="$2"
+                    else
+                        echo "Too many files named *go-plus.owl* in the provided folder, please chose a specific one!"
+                        usage
+                    fi
+                fi
+            else
+                echo "Expected argument after option -w/--owl!"
+                usage
+            fi
+            shift
+            shift;;
 
-# Sets the gene ontology folder and the gene ontology file name if the gene ontology file path is not defined in the configuration file.
-# Otherwise, from the given path extracts the folder path and the file name.
-if [[ ${#go_folder} -eq 0 ]]
-then
-    go_folder="${base_folder}input/go/"
-    used_go='go-plus.owl'
-else
-    case "${go_folder}" in
-        *go-plus.owl*) used_go=$(echo "${go_folder}" | awk -F/ '{print $NF}'); go_folder=${go_folder%"${used_go}"} ;; # Extract the gene ontology file name and the path.
-        *) echo 'ERROR: Gene ontology graph is not in the owl format or is not the plus version.'; exit 1 ;;
+        -g|--goa)
+            if [[ $# -gt 1 && ! $2 == -* ]]; then
+                if [ -f "$2" ]; then
+                    case "$2" in
+                        *.gaf*) used_goa=$(echo "$2" | awk -F/ '{print $NF}'); goa_folder=${2%"${used_goa}"} ;; # Extract the gene ontology file name and the path.
+                        *) echo 'ERROR: Gene annotation file is not in the .gaf format!'; usage;;
+                    esac
+                else
+                    gafs=$(find "$2" -type f -name *.gaf* 2> /dev/null |wc -l)
+                    if [ $gafs -eq 1 ]; then
+                        used_goa=$(find "$2" -type f -name *.gaf* -printf "%f\n")
+                        goa_folder="$2"
+                    elif [ $gafs -eq 0]; then
+                        echo "Downloading (and decompressing) goa_uniprot_all.gaf in the provided folder since it was empty"
+                        "${base_folder}/download.sh" -g "$2"
+                        used_goa="goa_uniprot_all.gaf"
+                        goa_folder="$2"
+                    else
+                        echo "Too many files named *.gaf* in the provided folder, please chose a specific one!"
+                        usage
+                    fi
+                fi
+            else
+                echo "Expected argument after option -g/--goa!"
+                usage
+            fi
+            shift
+            shift;;
+
+        -t|--taxonomy)
+            if [[ $# -gt 1 && ! $2 == -* ]]; then
+                if [ -f "$2" ]; then
+                    echo "This argument required a folder, not a file!"
+                    usage
+                elif [ ! -f "$2/names.dmp" ] || [ ! -f "$2/nodes.dmp" ] || [ ! -f "$2/merged.dmp" ]; then
+                    echo "The taxonomy is empty or corrupted, files names.dmp, nodes.dmp, merged.dmp are all expecterd to be in the provided folder!"
+                    echo "If you want the latest version to be downloaded there, please answer yes to the upcoming checkpoint"
+                    "${src_folder}/download.sh" -t "$2"
+                    taxonomy_folder="$2"
+                else
+                    taxonomy_folder="$2"
+                fi
+            else
+                echo "Expected argument after option -t/--taxonomy!"
+                usage
+            fi
+            shift
+            shift;;
+        -a|--files)
+            if [[ $# -gt 1 && ! $2 == -* ]]; then
+                if [ -f "$2" ]; then
+                    echo "This argument requires a folder, not a file!"
+                    usage
+                elif [ ! -d "$2" ]; then
+                    echo "This argument must point to an existing directory where the required additional files are!"
+                    usage
+                else
+                    add_files="$2"
+                fi
+            else
+                echo "Expected argument after option -a/--files !"
+                usage
+            fi
+            shift
+            shift;;
+        -i|--intermediate)
+            if [[ $# -gt 1 && ! $2 == -* ]]; then
+                if [ -f "$2" ]; then
+                    echo "This argument requires a folder, not a file!"
+                    usage
+                elif [ ! -d "$2" ]; then
+                    mkdir -p "$2"
+                    intermediate_files="$2"
+                else
+                    intermediate_files="$2"
+                fi
+            else
+                echo "Expected argument after option -i/--intermediate !"
+                usage
+            fi
+            shift
+            shift;;
+        -m|--type)
+            if [[ $# -gt 1 && ! $2 == -* ]]; then
+                type="$2"
+            else
+                echo "Expected argument after option -t/--type !"
+                usage
+            fi
+            shift
+            shift;;
+        -c|--cutoff)
+            if [[ $# -gt 1 && ! $2 == -* ]]; then
+                cutoff="$2"
+            else
+                echo "Expected argument after option -c/--cutoff !"
+                usage
+            fi
+            shift
+            shift;;
+        -h|--help)
+            usage;;
+        *)
+            echo "Error: Unknown option $1"
+            usage;;
     esac
-fi
+done
 
-# Sets the gene ontology annotation folder if the goa file path is not defined in the configuration file.
-# Otherwise, from the given path extracts the folder path and the file name.
-if [[ ${#goa_folder} -eq 0 ]]
-then
-    goa_folder="${base_folder}input/goa/"
-else
-    used_goa=$(echo "${goa_folder}" | awk -F/ '{print $NF}')
-    goa_folder=${goa_folder%"${used_goa}"}
-fi
-
-# Sets the taxonomic definition file in the add_files folder if it is not definied in the configuration file.
-if [[ ${#tax_constr_def_file} -eq 0 ]]
-then
-    tax_constr_def_file="${real_path}/input/add_files/taxonConstraintsDef.txt"
-fi
-
-# Sets the list of species file in the add_files folder if it is not definied in the configuration file.
-if [[ ${#species_list_file} -eq 0 ]]
-then
-    species_list_file="${real_path}/input/add_files/listOfSpecies.txt"
-fi
-
-# Sets the list of species file in the add_files folder if it is not definied in the configuration file.
-if [[ ${#unclassified_file} -eq 0 ]]
-then
-    unclassified_file="${real_path}/input/add_files/excluded_nodes.txt"
-fi
-
-
-# Sets the manual constratins in the add_files if it is not defined in the configuration file.
-if [[ ${#manual_constr_file} -eq 0 ]]
-then
-    manual_constr_file="${real_path}/input/add_files/manualConstraints.txt"
-fi
-
-# Sets the cut-off value to 500 if it is not defined in the configuration file.
-if [[ ${#cut_off} -eq 0 ]]
-then
-    cut_off=500
-fi
-
-
-# Check if the gene ontology and the taxonomy files are present.
-verifyGoFilePresence "${go_folder}" "${real_path}" "${config_file}"
-verifyTaxonomyFilesPresence "${taxonomy_folder}" "${real_path}" "${config_file}"
-# Check if the gene ontology annotation is present only if the type of constraints isn't manual.
-case "${type}" in
-    "GOConsortium"|"goc"|"g" ) ;;
-    * ) verifyGoaFilePresence "${goa_folder}" "${real_path}" "${config_file}"
-esac
-
-
-# Verify if the intermediate files folder exists. If not, make it.
-if [ ! -d "${int_file_folder}" ]
-then
-    mkdir -p "${int_file_folder}"
-fi
 
 # All the taxonomic constraints are generated.
 case "${type}" in
     # Generate only automatic taxonomic constraints using the data from the filtered gene ontology annotation file.
     "automatic"|"a"|"auto" )
-                         echo 'Discard ND, roots and RNACentral hits from GOA' ;
-                         "${src_folder}"./purgeRootsInterproFormGaf.py -g "${goa_folder}${used_goa}" -u "${unclassified_file}" -o "${int_file_folder}goa_uniprot_all.gaf" ;
+        echo 'Discard ND, roots and RNACentral hits from GOA'
+        goa_file="${goa_folder}${used_goa}"
+        purged_goa="${int_file_folder}goa_uniprot_all.gaf"
+        "${src_folder}"./purgeRootsInterproFormGaf.py -g "${goa_file}" -u "${unclassified_file}" -o "${purged_goa}"
 
-                         echo 'Calculate GO frequencies from purged GOA file' ;
-                         "${src_folder}"./GOAfreq.py -w "${go_folder}${used_go}" -g "${int_file_folder}goa_uniprot_all.gaf" -o "${int_file_folder}goa_uniprot_all_CumulFreq.txt" ;
+        echo 'Calculate GO frequencies from purged GOA file'
+        owl_file="${go_folder}${used_go}"
+        cumul_freq_file="${int_file_folder}goa_uniprot_all_CumulFreq.txt"
+        "${src_folder}"./GOAfreq.py -w "${owl_file}" -g "${purged_goa}" -o "${cumul_freq_file}"
 
-                         echo 'Produce for each species the list of GO occurrences found' ;
-                         "${src_folder}"./speciesToGO.py -g "${int_file_folder}goa_uniprot_all.gaf" -m "${taxonomy_folder}merged.dmp" -t "${taxonomy_folder}nodes.dmp" -n "${taxonomy_folder}names.dmp" -o "${int_file_folder}speciesGOusage.txt" > "${int_file_folder}speciesGOusage_MISSING_taxon.txt" ;
+        echo 'Produce for each species the list of GO occurrences found'
+        merged_file="${taxonomy_folder}merged.dmp"
+        nodes_file="${taxonomy_folder}nodes.dmp"
+        names_file="${taxonomy_folder}names.dmp"
+        go_usage="${int_file_folder}speciesGOusage.txt"
+        go_missing="${int_file_folder}speciesGOusage_MISSING_taxon.txt"
+        "${src_folder}"./speciesToGO.py -g "${purged_goa}" -m "${merged_file}" -t "${nodes_file}" -n "${names_file}" -o "${go_usage}" > "${go_missing}"
 
-                         echo 'Cluster species together and their corresponding GO' ;
-                         "${src_folder}"./clusterTaxon.py -c "${tax_constr_def_file}" -m "${taxonomy_folder}merged.dmp" -t "${taxonomy_folder}nodes.dmp" -n "${taxonomy_folder}names.dmp" -s "${int_file_folder}speciesGOusage.txt" -o "${int_file_folder}cluster_speciesGOusage.txt" ;
+        echo 'Cluster species together and their corresponding GO'
+        cluster_go_usage="${int_file_folder}cluster_speciesGOusage.txt"
+        "${src_folder}"./clusterTaxon.py -c "${tax_constr_def_file}" -m "${merged_file}" -t "${nodes_file}" -n "${names_file}" -s "${go_usage}" -o "${cluster_go_usage}"
 
-                         echo 'Compute the cumulative occurrence of GO terms in defined subdivisions using the graph of GO Memory Less' ;
-                         "${src_folder}"./speciesFreqCumul.py -i "${go_folder}${used_go}" -f "${int_file_folder}cluster_speciesGOusage.txt" -o "${int_file_folder}freqCumul_cluster_speciesGOusage.txt" ;
+        echo 'Compute the cumulative occurrence of GO terms in defined subdivisions using the graph of GO Memory Less'
+        freq_cluster_go_usage="${int_file_folder}freqCumul_cluster_speciesGOusage.txt"
+        "${src_folder}"./speciesFreqCumul.py -i "${owl_file}" -f "${cluster_go_usage}" -o "${freq_cluster_go_usage}"
 
-                         echo 'Create never_in considering what we have produced from the cumulated corpus of each subdivision' ;
-                         "${src_folder}"./createNeverIN.py -g "${int_file_folder}goa_uniprot_all_CumulFreq.txt" -c "${cut_off}" -u "${int_file_folder}freqCumul_cluster_speciesGOusage.txt" -w "${go_folder}${used_go}" -o "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt" ;
+        echo 'Create never_in considering what we have produced from the cumulated corpus of each subdivision'
+        never_in_go_usage="${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt"
+        "${src_folder}"./createNeverIN.py -g "${cumul_freq_file}" -c "${cut_off}" -u "${freq_cluster_go_usage}" -w "${owl_file}" -o "${never_in_go_usage}"
 
-                         echo 'Wrapper to make output identical' ;
-                         "${src_folder}"./wrapperTaxonConstraints.py -c "${tax_constr_def_file}" -n "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt" -o "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN_reformat.txt" ;;
+        echo 'Wrapper to make output identical'
+        never_in_reformat="${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN_reformat.txt"
+        "${src_folder}"./wrapperTaxonConstraints.py -c "${tax_constr_def_file}" -n "${never_in_go_usage}" -o "${never_in_reformat}";;
 
     # Generate all files except purged GOA and GOAfreq.
     "fast"|"f"|"fst" )
-                         echo 'Calculate GO frequencies from purged GOA file' ;
-                         "${src_folder}"./GOAfreq.py -w "${go_folder}${used_go}" -g "${int_file_folder}goa_uniprot_all.gaf" -o "${int_file_folder}goa_uniprot_all_CumulFreq.txt" ;
+        echo 'Calculate GO frequencies from purged GOA file'
+        owl_file="${go_folder}${used_go}"
+        cumul_freq_file="${int_file_folder}goa_uniprot_all_CumulFreq.txt"
+        goa_file="${goa_folder}${used_goa}"
+        "${src_folder}"./GOAfreq.py -w "${owl_file}" -g "${goa_file}" -o "${cumul_freq_file}"
 
-                         echo 'Produce for each species the list of GO occurrences found' ;
-                         "${src_folder}"./speciesToGO.py -g "${int_file_folder}goa_uniprot_all.gaf" -m "${taxonomy_folder}merged.dmp" -t "${taxonomy_folder}nodes.dmp" -n "${taxonomy_folder}names.dmp" -o "${int_file_folder}speciesGOusage.txt" > "${int_file_folder}speciesGOusage_MISSING_taxon.txt" ;
+        echo 'Produce for each species the list of GO occurrences found'
+        merged_file="${taxonomy_folder}merged.dmp"
+        nodes_file="${taxonomy_folder}nodes.dmp"
+        names_file="${taxonomy_folder}names.dmp"
+        go_usage="${int_file_folder}speciesGOusage.txt"
+        go_missing="${int_file_folder}speciesGOusage_MISSING_taxon.txt"
+        "${src_folder}"./speciesToGO.py -g "${goa_file}" -m "${merged_file}" -t "${nodes_file}" -n "${names_file}" -o "${go_usage}" > "${go_missing}"
 
-                         echo 'Cluster species together and their corresponding GO' ;
-                         "${src_folder}"./clusterTaxon.py -c "${tax_constr_def_file}" -m "${taxonomy_folder}merged.dmp" -t "${taxonomy_folder}nodes.dmp" -n "${taxonomy_folder}names.dmp" -s "${int_file_folder}speciesGOusage.txt" -o "${int_file_folder}cluster_speciesGOusage.txt" ;
+        echo 'Cluster species together and their corresponding GO'
+        cluster_go_usage="${int_file_folder}cluster_speciesGOusage.txt"
+        "${src_folder}"./clusterTaxon.py -c "${tax_constr_def_file}" -m "${merged_file}" -t "${nodes_file}" -n "${names_file}" -s "${go_usage}" -o "${cluster_go_usage}"
 
-                         echo 'Compute the cumulative occurrence of GO terms in defined subdivisions using the graph of GO Memory Less' ;
-                         "${src_folder}"./speciesFreqCumul.py -i "${go_folder}${used_go}" -f "${int_file_folder}cluster_speciesGOusage.txt" -o "${int_file_folder}freqCumul_cluster_speciesGOusage.txt" ;
+        echo 'Compute the cumulative occurrence of GO terms in defined subdivisions using the graph of GO Memory Less'
+        freq_cluster_go_usage="${int_file_folder}freqCumul_cluster_speciesGOusage.txt"
+        "${src_folder}"./speciesFreqCumul.py -i "${owl_file}" -f "${cluster_go_usage}" -o "${freq_cluster_go_usage}"
 
-                         echo 'Create never_in considering what we have produced from the cumulated corpus of each subdivision' ;
-                         "${src_folder}"./createNeverIN.py -g "${int_file_folder}goa_uniprot_all_CumulFreq.txt" -c "${cut_off}" -u "${int_file_folder}freqCumul_cluster_speciesGOusage.txt" -w "${go_folder}${used_go}" -o "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt" ;
+        echo 'Create never_in considering what we have produced from the cumulated corpus of each subdivision'
+        never_in_go_usage="${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt"
+        "${src_folder}"./createNeverIN.py -g "${cumul_freq_file}" -c "${cut_off}" -u "${freq_cluster_go_usage}" -w "${owl_file}" -o "${never_in_go_usage}"
 
-                         echo 'Wrapper to make output identical' ;
-                         "${src_folder}"./wrapperTaxonConstraints.py -c "${tax_constr_def_file}" -n "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt" -o "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN_reformat.txt" ;;
+        echo 'Wrapper to make output identical'
+        never_in_reformat="${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN_reformat.txt"
+        "${src_folder}"./wrapperTaxonConstraints.py -c "${tax_constr_def_file}" -n "${never_in_go_usage}" -o "${never_in_reformat}";;
 
     # Generate only manual constraints using the data from the gene ontology consortium.
     "GOConsortium"|"goc"|"g" )
-                         echo 'Consider taxon constraints from consortium' ;
-                         "${src_folder}"./taxonConstraintsGOconsortium.py -w "${go_folder}${used_go}" -m "${taxonomy_folder}merged.dmp" -t "${taxonomy_folder}nodes.dmp" -n "${taxonomy_folder}names.dmp" -o "${int_file_folder}constraintsCorrectNR_and_splitUnionNEW.txt" ;;
+        echo 'Consider taxon constraints from consortium'
+        owl_file="${go_folder}${used_go}"
+        merged_file="${taxonomy_folder}merged.dmp"
+        nodes_file="${taxonomy_folder}nodes.dmp"
+        names_file="${taxonomy_folder}names.dmp"
+        output_file="${int_file_folder}constraintsCorrectNR_and_splitUnionNEW.txt"
+        "${src_folder}"./taxonConstraintsGOconsortium.py -w "${owl_file}" -m "${merged_file}" -t "${nodes_file}" -n "${names_file}" -o "${output_file}" ;;
 
     # Generate only constraints dependant on cutoff value.
     "cutoff_only"|"c"|"cut" )
-                         echo 'Create never_in considering what we have produced from the cumulated corpus of each subdivision' ;
-                         "${src_folder}"./createNeverIN.py -g "${int_file_folder}goa_uniprot_all_CumulFreq.txt" -c "${cut_off}" -u "${int_file_folder}freqCumul_cluster_speciesGOusage.txt" -w "${go_folder}${used_go}" -o "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt" ;
+        echo 'Create never_in considering what we have produced from the cumulated corpus of each subdivision'
+        cumul_freq_file="${int_file_folder}goa_uniprot_all_CumulFreq.txt"
+        freq_cluster_go_usage="${int_file_folder}freqCumul_cluster_speciesGOusage.txt"
+        never_in_go_usage="${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt"
+        "${src_folder}"./createNeverIN.py -g "${cumul_freq_file}" -c "${cut_off}" -u "${freq_cluster_go_usage}" -w "${owl_file}" -o "${never_in_go_usage}"
 
-                          echo 'Wrapper to make output identical' ;
-                         "${src_folder}"./wrapperTaxonConstraints.py -c "${tax_constr_def_file}" -n "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt" -o "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN_reformat.txt" ;;
+        echo 'Wrapper to make output identical'
+        never_in_reformat="${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN_reformat.txt"
+        "${src_folder}"./wrapperTaxonConstraints.py -c "${tax_constr_def_file}" -n "${never_in_go_usage}" -o "${never_in_reformat}";;
 
     #Generate new files based on different taxonomic reference nodes.
     "taxonDef"|"t"|"tax" )
-                         echo 'Cluster species together and their corresponding GO' ;
-                         "${src_folder}"./clusterTaxon.py -c "${tax_constr_def_file}" -m "${taxonomy_folder}merged.dmp" -t "${taxonomy_folder}nodes.dmp" -n "${taxonomy_folder}names.dmp" -s "${int_file_folder}speciesGOusage.txt" -o "${int_file_folder}cluster_speciesGOusage.txt" ;
+        echo 'Cluster species together and their corresponding GO'
+        merged_file="${taxonomy_folder}merged.dmp"
+        nodes_file="${taxonomy_folder}nodes.dmp"
+        names_file="${taxonomy_folder}names.dmp"
+        go_usage="${int_file_folder}speciesGOusage.txt"
+        cluster_go_usage="${int_file_folder}cluster_speciesGOusage.txt"
+        "${src_folder}"./clusterTaxon.py -c "${tax_constr_def_file}" -m "${merged_file}" -t "${nodes_file}" -n "${names_file}" -s "${go_usage}" -o "${cluster_go_usage}"
 
-                         echo 'Compute the cumulative occurrence of GO terms in defined subdivisions using the graph of GO Memory Less' ;
-                         "${src_folder}"./speciesFreqCumul.py -i "${go_folder}${used_go}" -f "${int_file_folder}cluster_speciesGOusage.txt" -o "${int_file_folder}freqCumul_cluster_speciesGOusage.txt" ;
+        echo 'Compute the cumulative occurrence of GO terms in defined subdivisions using the graph of GO Memory Less'
+        freq_cluster_go_usage="${int_file_folder}freqCumul_cluster_speciesGOusage.txt"
+        "${src_folder}"./speciesFreqCumul.py -i "${owl_file}" -f "${cluster_go_usage}" -o "${freq_cluster_go_usage}"
 
-                         echo 'Create never_in considering what we have produced from the cumulated corpus of each subdivision' ;
-                         "${src_folder}"./createNeverIN.py -g "${int_file_folder}goa_uniprot_all_CumulFreq.txt" -c "${cut_off}" -u "${int_file_folder}freqCumul_cluster_speciesGOusage.txt" -w "${go_folder}${used_go}" -o "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt" ;
+        echo 'Create never_in considering what we have produced from the cumulated corpus of each subdivision'
+        never_in_go_usage="${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt"
+        "${src_folder}"./createNeverIN.py -g "${cumul_freq_file}" -c "${cut_off}" -u "${freq_cluster_go_usage}" -w "${owl_file}" -o "${never_in_go_usage}"
 
-                         echo 'Wrapper to make output identical' ;
-                         "${src_folder}"./wrapperTaxonConstraints.py -c "${tax_constr_def_file}" -n "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt" -o "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN_reformat.txt" ;;
+        echo 'Wrapper to make output identical'
+        never_in_reformat="${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN_reformat.txt"
+        "${src_folder}"./wrapperTaxonConstraints.py -c "${tax_constr_def_file}" -n "${never_in_go_usage}" -o "${never_in_reformat}";;
 
-    # Generate the taxonomic constraints using data from the gene ontology consortium and the gene ontology annotation. The first ones are more important than the second ones. 
+    # Generate the taxonomic constraints using data from the gene ontology consortium and the gene ontology annotation. The first ones are more important than the second ones.
     * )
-        echo 'Discard ND, roots and RNACentral hits from GOA' ;
-        "${src_folder}"./purgeRootsInterproFormGaf.py -g "${goa_folder}${used_goa}" -u "${unclassified_file}" -o "${int_file_folder}goa_uniprot_all.gaf" ;
+        echo 'Discard ND, roots and RNACentral hits from GOA'
+        goa_file="${goa_folder}${used_goa}"
+        purged_goa="${int_file_folder}goa_uniprot_all.gaf"
+        "${src_folder}"./purgeRootsInterproFormGaf.py -g "${goa_file}" -u "${unclassified_file}" -o "${purged_goa}"
 
-        echo 'Calculate GO frequencies from purged GOA file' ;
-        "${src_folder}"./GOAfreq.py -w "${go_folder}${used_go}" -g "${int_file_folder}goa_uniprot_all.gaf" -o "${int_file_folder}goa_uniprot_all_CumulFreq.txt" ;
+        echo 'Calculate GO frequencies from purged GOA file'
+        owl_file="${go_folder}${used_go}"
+        cumul_freq_file="${int_file_folder}goa_uniprot_all_CumulFreq.txt"
+        "${src_folder}"./GOAfreq.py -w "${owl_file}" -g "${purged_goa}" -o "${cumul_freq_file}"
 
-        echo 'Produce for each species the list of GO occurrences found' ;
-        "${src_folder}"./speciesToGO.py -g "${int_file_folder}goa_uniprot_all.gaf" -m "${taxonomy_folder}merged.dmp" -t "${taxonomy_folder}nodes.dmp" -n "${taxonomy_folder}names.dmp" -o "${int_file_folder}speciesGOusage.txt" > "${int_file_folder}speciesGOusage_MISSING_taxon.txt" ;
+        echo 'Produce for each species the list of GO occurrences found'
+        merged_file="${taxonomy_folder}merged.dmp"
+        nodes_file="${taxonomy_folder}nodes.dmp"
+        names_file="${taxonomy_folder}names.dmp"
+        go_usage="${int_file_folder}speciesGOusage.txt"
+        go_missing="${int_file_folder}speciesGOusage_MISSING_taxon.txt"
+        "${src_folder}"./speciesToGO.py -g "${purged_goa}" -m "${merged_file}" -t "${nodes_file}" -n "${names_file}" -o "${go_usage}" > "${go_missing}"
 
-        echo 'Cluster species together and their corresponding GO' ;
-        "${src_folder}"./clusterTaxon.py -constraints "${tax_constr_def_file}" -m "${taxonomy_folder}merged.dmp" -t "${taxonomy_folder}nodes.dmp" -n "${taxonomy_folder}names.dmp" -s "${int_file_folder}speciesGOusage.txt" -o "${int_file_folder}cluster_speciesGOusage.txt" ;
+        echo 'Cluster species together and their corresponding GO'
+        cluster_go_usage="${int_file_folder}cluster_speciesGOusage.txt"
+        "${src_folder}"./clusterTaxon.py -c "${tax_constr_def_file}" -m "${merged_file}" -t "${nodes_file}" -n "${names_file}" -s "${go_usage}" -o "${cluster_go_usage}"
 
-        echo 'Compute the cumulative occurrence of GO terms in defined subdivisions using the graph of GO Memory Less' ;
-        "${src_folder}"./speciesFreqCumul.py -i "${go_folder}${used_go}" -f "${int_file_folder}cluster_speciesGOusage.txt" -o "${int_file_folder}freqCumul_cluster_speciesGOusage.txt" ;
+        echo 'Compute the cumulative occurrence of GO terms in defined subdivisions using the graph of GO Memory Less'
+        freq_cluster_go_usage="${int_file_folder}freqCumul_cluster_speciesGOusage.txt"
+        "${src_folder}"./speciesFreqCumul.py -i "${owl_file}" -f "${cluster_go_usage}" -o "${freq_cluster_go_usage}"
 
-        echo 'Create never_in considering what we have produced from the cumulated corpus of each subdivision' ;
-        "${src_folder}"./createNeverIN.py -g "${int_file_folder}goa_uniprot_all_CumulFreq.txt" -c "${cut_off}" -u "${int_file_folder}freqCumul_cluster_speciesGOusage.txt" -w "${go_folder}${used_go}" -o "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt" ;
+        echo 'Create never_in considering what we have produced from the cumulated corpus of each subdivision'
+        never_in_go_usage="${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt"
+        "${src_folder}"./createNeverIN.py -g "${cumul_freq_file}" -c "${cut_off}" -u "${freq_cluster_go_usage}" -w "${owl_file}" -o "${never_in_go_usage}"
 
-        echo 'Wrapper to make output identical' ;
-        "${src_folder}"./wrapperTaxonConstraints.py -c "${tax_constr_def_file}" -n "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt" -o "${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN_reformat.txt" ;
+        echo 'Wrapper to make output identical'
+        never_in_reformat="${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN_reformat.txt"
+        "${src_folder}"./wrapperTaxonConstraints.py -c "${tax_constr_def_file}" -n "${never_in_go_usage}" -o "${never_in_reformat}"
 
-        echo 'Consider taxon constraints from consortium';
-        "${src_folder}"./taxonConstraintsGOconsortium.py -w "${go_folder}${used_go}" -m "${taxonomy_folder}merged.dmp" -t "${taxonomy_folder}nodes.dmp" -n "${taxonomy_folder}names.dmp" -o "${int_file_folder}constraintsCorrectNR_and_splitUnionNEW.txt" ;;
+        echo 'Consider taxon constraints from consortium'
+        output_file="${int_file_folder}constraintsCorrectNR_and_splitUnionNEW.txt"
+        "${src_folder}"./taxonConstraintsGOconsortium.py -w "${owl_file}" -m "${merged_file}" -t "${nodes_file}" -n "${names_file}" -o "${output_file}";;
 esac

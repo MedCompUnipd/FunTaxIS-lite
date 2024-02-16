@@ -42,7 +42,7 @@ def load_go_list(go_owl, goa_freq, cutoff):
 
             values = line.strip().split('\t')
             # values[0] = go_id / values[1] = go_descendant / values[2] = go_subont / values[6] = go_freq_goa
-            if int(values[6]) >= cutoff
+            if int(values[6]) >= cutoff:
                 go[values[0]] = {'freq': values[6], 'desc': values[1], 'subont': values[2]}
 
     return go

@@ -66,7 +66,7 @@ def get_parent(taxon, son_parent, Taxa):
     return son_parent[father]
 
 
-def update_total_count(parent, total_count, gos)
+def update_total_count(parent, total_count, gos):
     # update the total_count dictionary accounting for the current taxon data and for its ancestor
     if parent not in total_count:
         total_count[parent] = {}

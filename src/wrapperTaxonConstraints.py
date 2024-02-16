@@ -30,7 +30,7 @@ def get_args():
     parser.add_argument('-n', '--never_in', metavar='INPUT_FILE',  help='file output of createNeverIN.py where each taxa and its GOs are reported in mulfasta format', required=True)
     parser.add_argument('-o', '--out', metavar='OUTPUT_FILE',  help='txt file containing output', required=True)
 
-    return = vars(parser.parse_args())
+    return vars(parser.parse_args())
 
 
 def parse_constraints(constraints):

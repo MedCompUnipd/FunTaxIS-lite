@@ -54,10 +54,10 @@ if __name__ == "__main__":
         print(f'Input gaf file provided does not exist! Check: {gaf_in}', file=sys.stderr)
         raise FileNotFoundError
 
-    out_file, out_path = os.path.split(gaf_out)
+    out_path, basename = os.path.split(gaf_out)
     if not os.path.exists(gaf_out):
         print(f'WARNING: output directory {out_path} does not exist and will be created', file=sys.stderr)
-        os.makedirs(path)
+        os.makedirs(out_path)
 
     # retrieve set of unclassified species if the input is given
     if unclass:
