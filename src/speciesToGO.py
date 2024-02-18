@@ -88,7 +88,7 @@ if __name__ == "__main__":
     out_file = args['out']
 
     if not os.path.exists(taxa) or not os.path.exists(merge) or not os.path.exists(names):
-        print(f'Incorrect taxonomy! check the files given as input:\n{taxa}\n{merge}\n{names}', file=sys.stderr
+        print(f'Incorrect taxonomy! check the files given as input:\n{taxa}\n{merge}\n{names}', file=sys.stderr)
         raise FileNotFoundError
 
     if not os.path.exists(gaf_file):

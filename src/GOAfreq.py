@@ -35,6 +35,8 @@ def parse_gaf(gaf_file):
     list_go = {}
     with open(gaf_file, 'r') as gaf:
         for line in gaf:
+            if line.startswith('!'):
+                continue
             values = line.strip().split('\t')
             # replacing : with _ for compatibility with all libraries
             goiter = values[4].replace(':','_')

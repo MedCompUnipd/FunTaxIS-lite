@@ -80,4 +80,4 @@ if __name__ == '__main__':
                 gop[values[0]] = values[4]
 
     if gos:
-        write_info(go_owl, gos, gop, out)
+        write_info(taxon, go_owl, gos, gop, out)

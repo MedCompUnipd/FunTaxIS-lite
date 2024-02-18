@@ -58,7 +58,7 @@ if __name__ == "__main__":
     args = get_args()
     constraints = args['constraints']
     never_in = args['never_in']
-    out_file = args['out_file']
+    out_file = args['out']
 
     if not os.path.exists(constraints):
         print(f'Input CONSTRAINTS file provided {constraints} does not exist!', file=sys.stderr)

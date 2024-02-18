@@ -85,7 +85,7 @@ def write_go(go_list, go_owl, out):
         out.write(f'{go}\tnever_in\t{details["name"]}\t{details["namespace"]}\n')
 
 
-if __name__ == '__main__'
+if __name__ == '__main__':
     args = get_args()
     owl_file = args['owl']
     goa_freq = args['goa_freq']

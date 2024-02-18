@@ -198,7 +198,7 @@ done
 # All the taxonomic constraints are generated.
 case "${type}" in
     # Generate the taxonomic constraints using data from the gene ontology consortium and the gene ontology annotation. The first ones are more important than the second ones.
-    * )
+    all )
         echo 'Executing mode: COMPLETE'
         echo 'Discard ND, roots and RNACentral hits from GOA'
         goa_file="${goa_folder}${used_goa}"
@@ -258,7 +258,7 @@ case "${type}" in
         ;;
 
     # Generate only automatic taxonomic constraints using the data from the filtered gene ontology annotation file.
-    "automatic"|"a"|"auto" )
+    automatic|a|auto )
         echo 'Executing mode: AUTOMATIC'
         echo 'Discard ND, roots and RNACentral hits from GOA'
         goa_file="${goa_folder}${used_goa}"
@@ -314,7 +314,7 @@ case "${type}" in
         ;;
 
     # Generate all files except purged GOA and GOAfreq.
-    "fast"|"f"|"fst" )
+    fast|f|fst )
         echo 'Executing mode: FAST'
         echo 'Calculate GO frequencies from purged GOA file'
         owl_file="${go_folder}${used_go}"
@@ -361,9 +361,10 @@ case "${type}" in
         ;;
 
     #Generate new files based on different taxonomic reference nodes.
-    "taxonDef"|"t"|"tax" )
+    taxonDef|t|tax )
         echo 'Executing mdoe: TAXONDEF'
         echo 'Cluster species together and their corresponding GO'
+        owl_file="${go_folder}${used_go}"
         merged_file="${taxonomy_folder}merged.dmp"
         nodes_file="${taxonomy_folder}nodes.dmp"
         names_file="${taxonomy_folder}names.dmp"
@@ -397,7 +398,7 @@ case "${type}" in
         ;;
 
     # Generate only constraints dependant on cutoff value.
-    "cutoff_only"|"c"|"cut" )
+    cutoff_only|c|cut )
         echo 'Executing mode: CUTOFF-ONLY'
         echo 'Create never_in considering what we have produced from the cumulated corpus of each subdivision'
         cumul_freq_file="${int_file_folder}goa_uniprot_all_CumulFreq.txt"
@@ -417,7 +418,7 @@ case "${type}" in
         ;;
 
     # Generate only manual constraints using the data from the gene ontology consortium.
-    "GOConsortium"|"goc"|"g" )
+    GOConsortium|goc|g )
         echo 'Executing mode: CONSORTIUM'
         echo 'Consider taxon constraints from consortium'
         owl_file="${go_folder}${used_go}"
