@@ -79,5 +79,5 @@ if __name__ == '__main__':
                 gos[values[0]] = int(values[1])
                 gop[values[0]] = values[4]
 
-    if gos:
-        write_info(taxon, go_owl, gos, gop, out)
+        if gos:
+            write_info(taxon, go_owl, gos, gop, out)

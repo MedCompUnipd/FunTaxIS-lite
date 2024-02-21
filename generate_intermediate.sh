@@ -404,6 +404,7 @@ case "${type}" in
         cumul_freq_file="${int_file_folder}goa_uniprot_all_CumulFreq.txt"
         freq_cluster_go_usage="${int_file_folder}freqCumul_cluster_speciesGOusage.txt"
         never_in_go_usage="${int_file_folder}freqCumul_cluster_speciesGOusage_NEVER_IN.txt"
+        owl_file="${go_folder}${used_go}"
         "${src_folder}"./createNeverIN.py -g "${cumul_freq_file}" -c "${cut_off}" -u "${freq_cluster_go_usage}" -w "${owl_file}" -o "${never_in_go_usage}"
 
         echo 'Wrapper to make output identical'

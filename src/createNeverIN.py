@@ -34,7 +34,7 @@ def get_args():
 
 def load_go_list(go_owl, goa_freq, cutoff):
     go = {}
-    with open(goa_freq, r) as goafreq:
+    with open(goa_freq, 'r') as goafreq:
         for line in goafreq:
             if line.startswith("#"):
                 # skip comments
@@ -93,7 +93,7 @@ if __name__ == '__main__':
     out_file = args['out']
     cumul_file = args['cumul']
 
-    if not os.path.exists(oel_file):
+    if not os.path.exists(owl_file):
         print(f'Input OWL file provided {owl_file} does not exist!', file=sys.stderr)
         raise FileNotFoundError
 
