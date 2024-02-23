@@ -15,12 +15,13 @@
 # Licence:     GPL
 #-------------------------------------------------------------------------------
 
+
 import argparse
 import types
 import urllib.request
 from taxonLibrary3 import *
 from owlLibrary2 import *
-from os.path import join
+import os
 
 try:
     from bs4 import BeautifulSoup
@@ -121,72 +122,83 @@ def find_new_taxon(taxonomy, taxid):
     return new_taxa, new_taxa_name, taxa_status
 
 
-def parse_partition(partition_file, taxa, ancestors):
-    list_of_total_taxa_constraints = {}
+def get_taxa_constraints(partition, taxa):
+    import_list = imports()
+
+    ancestors = taxa.ancestors_full_list()
     tax_constr_def = []
-    merge_delete = 0
     ref_nodes = set()
+    merge_delete = 0
 
-    with open(partition_file, 'r') as list_of_partition:
+    list_of_total_taxa_constraints = {}
+    with open(partition, 'r') as list_of_partition:
         for line in list_of_partition:
+            line = line.strip()
             if line.startswith('#'):
-                pass
-            else:
-                tax_def_data = line.strip().split('\t')
-                taxon_tmp = tax_def_data[0]
-                if taxon_tmp not in ancestors:
-                    # Verify if the bs4 library wasn't imported.
-                    if 'bs4' not in import_list:
-                        print(f'WARNING!!! {taxon_tmp} does not found, so is not considered.\nCheck the link https://www.ncbi.nlm.nih.gov/taxonomy/?term={taxon_tmp} and modify the taxonConstraintsDef.txt file.')
-                        continue
+                continue
+
+            tax_def_data = line.strip().split('\t')
+            taxon_tmp = tax_def_data[0]
+            if taxon_tmp not in ancestors:
+                # Verify if the bs4 library wasn't imported.
+                if 'bs4' not in import_list:
+                    print(f'WARNING!!! {taxon_tmp} does not found, so is not considered.')
+                    print(f'Check the link https://www.ncbi.nlm.nih.gov/taxonomy/?term={taxon_tmp} and modify the taxonConstraintsDef.txt file.')
+                    continue
+
+                # Check the taxon_tmp status in the NCBI site using the function find_new_taxon.
+                new_taxon, new_taxon_name, tmp_taxon_status = find_new_taxon(taxa, taxon_tmp)
+                if new_taxon is not None and tmp_taxon_status == 'merged': # Merged case
+                    if new_taxon in ancestors:
+                        print(f'WARNING!!! {taxon_tmp} was merged into taxid {new_taxon}. The last one is used.')
+                        taxon_tmp = new_taxon
                     else:
-                        # Check the taxon_tmp status in the NCBI site using the function find_new_taxon.
-                        new_taxon, new_taxon_name, tmp_taxon_status = find_new_taxon(taxa, taxon_tmp)
-                        if new_taxon is not None and tmp_taxon_status == 'merged': # Merged case
-                            if new_taxon in ancestors:
-                                print(f'WARNING!!! {taxon_tmp} was merged into taxid {new_taxon}. The last one is used.')
-                                taxon_tmp = new_taxon
-                            else:
-                                print(f'WARNING!!! {taxon_tmp} not found, so is not considered.\nCheck the link https://www.ncbi.nlm.nih.gov/taxonomy/?term={taxon_tmp} and modify the taxonConstraintsDef.txt file.')
-                                continue
-                        elif tmp_taxon_status == 'deleted': # Deleted case
-                            if new_taxon is not None and new_taxon in ancestors:
-                                print(f'WARNING!!! {taxon_tmp} was deleted, so {new_taxon} ({new_taxon_name}) is considered.')
-                                taxon_tmp = new_taxon
-                            else:
-                                print(f'WARNING!!! {taxon_tmp} not found, so is not considered.\nCheck the link https://www.ncbi.nlm.nih.gov/taxonomy/?term={taxon_tmp} and modify the taxonConstraintsDef.txt file.')
-                                continue
-                        elif tmp_taxon_status == 'not exists': # Not exist case
-                            print(f'WARNING!!! {taxon_tmp} does not exist, so is not considered.')
-                            continue
-                        tax_constr_def.append((new_taxon, new_taxon_name, 'Unknown', 'other', 'Unknown', 'NEW'))
-                        merge_delete += 1
-                else:
-                    tax_constr_def.append(tuple(tax_def_data))
-                    ref_nodes.add(taxon_tmp)
+                        print(f'WARNING!!! {taxon_tmp} not found, so is not considered.')
+                        print(f'Check the link https://www.ncbi.nlm.nih.gov/taxonomy/?term={taxon_tmp} and modify the taxonConstraintsDef.txt file.')
+                        continue
+                elif tmp_taxon_status == 'deleted': # Deleted case
+                    if new_taxon is not None and new_taxon in ancestors:
+                        print(f'WARNING!!! {taxon_tmp} was deleted, so {new_taxon} ({new_taxon_name}) is considered.')
+                        taxon_tmp = new_taxon
+                    else:
+                        print(f'WARNING!!! {taxon_tmp} not found, so is not considered.')
+                        print(f'Check the link https://www.ncbi.nlm.nih.gov/taxonomy/?term={taxon_tmp} and modify the taxonConstraintsDef.txt file.')
+                        continue
+                elif tmp_taxon_status == 'not exists': # Not exist case
+                    print(f'WARNING!!! {taxon_tmp} does not exist, so is not considered.')
+                    continue
+                tax_constr_def.append((new_taxon, new_taxon_name, 'Unknown', 'other', 'Unknown', 'NEW'))
+                merge_delete += 1
 
-                anc_tmp = ancestors[taxon_tmp]
-                list_of_total_taxa_constraints[taxon_tmp] = anc_tmp
+            else:
+                tax_constr_def.append(tuple(tax_def_data))
+                ref_nodes.add(taxon_tmp)
 
-    return list_of_total_taxa_constraints, tax_constr_def, ref_nodes, merge_delete
+            anc_tmp = ancestors[taxon_tmp]
+            list_of_total_taxa_constraints[taxon_tmp] = anc_tmp
+
+    return list_of_total_taxa_constraints, merge_delete, tax_constr_def, ancestors, ref_nodes
 
 
-def write_taxnodes(partition, tax_constr_def):
+def write_auto(partition, tax_constr_def):
     path_components = partition.split('/')
     tax_const_def_file_path = os.path.join(*path_components[:-1])
 
-    with open(join(tax_const_def_file_path, 'taxonConstraintsDefAuto.txt'), 'w') as tcda_file:
+    with open(os.path.join(tax_const_def_file_path, 'taxonConstraintsDefAuto.txt'), 'w') as tcda_file:
         for tp in tax_constr_def:
-            tcda_file.write(f'{tp[0]}\t{tp[1]}\t{tp[2]}\t{tp[3]}\t{tp[4]}')
             if len(tp) < 6:
-                tcda_file.write('\n')
+                tcda_file.write(f'{tp[0]}\t{tp[1]}\t{tp[2]}\t{tp[3]}\t{tp[4]}\n')
             else:
-                tcda_file.write(f'\t***{tp[5]}***\n')
+                tcda_file.write(f'{tp[0]}\t{tp[1]}\t{tp[2]}\t{tp[3]}\t{tp[4]}\t***{tp[5]}***\n')
 
 
-def get_species_list(merged, list_file):
-    list_of_species = list()
-    with open(list_file, 'r') as list_of_species_file:
+def get_species_list(taxa, species):
+    ##load species for which to create a constraint
+    list_of_species = []
+    merged = taxa.merging()
+
+    ##check if any taxonID have been merged into another
+    with open(species, 'r') as list_of_species_file:
         for line in list_of_species_file:
             try:
                 list_of_species.append(merged[line.strip()])
@@ -197,16 +209,18 @@ def get_species_list(merged, list_file):
     return list_of_species
 
 
-def load_consortium(go_const, dict_only_in, ancestors, go_owl, list_of_constraints_per_species_go, union_taxon):
-    ### load constraints from GO consortium
+def load_constraints_consortiun(go_const, list_of_species, ancestors, go_owl, list_of_constraints_per_species_go, union_taxon):
     with open(go_const, 'r') as go_const:
+        dict_only_in = {}
         for line in go_const:
             values = line.strip().split('\t')
             if values[5] == 'only in taxon':
                 #build dictionary of only_in constrains to be converted to never_ins for other species
                 if values[3] not in dict_only_in:
                     dict_only_in[values[3]] = set()
+
                 dict_only_in[values[3]].add(values[0])
+
             for taxon in list_of_species:
                 anc = ancestors[taxon]
                 if values[5] == 'never in taxon':
@@ -227,17 +241,36 @@ def load_consortium(go_const, dict_only_in, ancestors, go_owl, list_of_constrain
                     elif values[3] in anc or taxon == values[3]:
                         union_taxon[taxon].add(values[0])
 
+    return dict_only_in
 
-def load_auto(aut_const, list_of_constraints_per_species_auto):
-    with open(aut_const,'r') as aut_const:
+
+def load_constraints_auto(ref_nodes, aut_const):
+    list_of_constraints_per_species_auto = {}
+    for taxon in ref_nodes:
+        if taxon not in list_of_constraints_per_species_auto:
+            list_of_constraints_per_species_auto[taxon] = set()
+
+    with open(aut_const, 'r') as aut_const:
         for line in aut_const:
-            line = line.strip().split('\t')
-            if line[3] in list_of_constraints_per_species_auto:
-                list_of_constraints_per_species_auto[line[3]].add(line[0])
+            values = line.strip().split('\t')
+            if values[3] in list_of_constraints_per_species_auto:
+                list_of_constraints_per_species_auto[values[3]].add(values[0])
+
+    return list_of_constraints_per_species_auto
 
 
-def load_manual(man_constr, go_owl, list_of_species, list_of_constraints_per_species_manual, add_never_in_manual, add_in_manual, ancestors, descendants, log_file):
-    with open(man_constr, 'r') as manual:
+def overrule_with_manual(list_of_species, manual, go_owl, ancestors, log_file):
+    add_never_in_manual = {}
+    add_in_manual = {}
+
+    for taxon in list_of_species:
+        add_never_in_manual[taxon] = set()
+        add_in_manual[taxon] = set()
+
+    #### give top priority to MANUAL !!!! OVER THE REST !!!!
+    list_of_constraints_per_species_MANUAL = {}
+
+    with open(manual, 'r') as manual:
         for line in manual:
             if line.startswith('#'):
                 continue
@@ -245,49 +278,65 @@ def load_manual(man_constr, go_owl, list_of_species, list_of_constraints_per_spe
             list_of_go = go_owl.go_descendants_using_valid_edges(values[0])
             if values[5] == 'never in taxon':
                 for taxon in list_of_species:
-                    if taxon not in list_of_constraints_per_species_manual:
-                        list_of_constraints_per_species_manual[taxon] = {'NEVER_IN': {}, 'IN': {}}
+                    if taxon not in list_of_constraints_per_species_MANUAL:
+                        list_of_constraints_per_species_MANUAL[taxon] = {'NEVER_IN': {}, 'IN': {}}
 
                     anc = ancestors[taxon]
                     if values[3] in anc or taxon == values[3]:
-                        list_of_constraints_per_species_manual[taxon]['NEVER_IN'][values[0]] = values[3]
-                        log_file.write(f'add a never_in for {values[0]} in {taxon}\n')
+                        list_of_constraints_per_species_MANUAL[taxon]['NEVER_IN'][values[0]] = values[3]
+                        log_file.write(f'add a NEVER_IN for {values[0]} in {taxon}\n')
                         add_never_in_manual[taxon].add(values[0])
                         for go_son in list_of_go:
-                            log_file.write(f'add a never_in for {go_son} in {taxon}\n')
-                            list_of_constraints_per_species_manual[taxon]['NEVER_IN'][go_son] = values[3]
+                            log_file.write(f'add a NEVER_IN for {go_son} in {taxon}\n')
+                            list_of_constraints_per_species_MANUAL[taxon]['NEVER_IN'][go_son] = values[3]
                             add_never_in_manual[taxon].add(go_son)
+
             elif values[5] == 'in taxon':
                 for taxon in list_of_species:
-                    if taxon not in list_of_constraints_per_species_manual:
-                        list_of_constraints_per_species_manual[taxon] = {'NEVER_IN': {}, 'IN': {}}
+                    if taxon not in list_of_constraints_per_species_MANUAL:
+                        list_of_constraints_per_species_MANUAL[taxon] = {'NEVER_IN': {}, 'IN': {}}
+
                     try:
                         desc = descendants[taxon]
                     except KeyError:
                         desc = set()
+
                     anc = ancestors[taxon]
                     if values[3] in anc or taxon == values[3]:
-                        list_of_constraints_per_species_manual[taxon]['IN'][values[0]] = values[3]
+                        list_of_constraints_per_species_MANUAL[taxon]['IN'][values[0]] = values[3]
                         add_in_manual[taxon].add(values[0])
-                        log_file.write(f'add a in for {values[0]} in {taxon}\n')
+                        log_file.write(f'add a IN for {values[0]} in {taxon}\n')
                         for go_son in list_of_go:
-                            list_of_constraints_per_species_manual[taxon]['in'][go_son] = values[3]
-                            log_file.write(f'add a in for {go_son} in {taxon}\n')
+                            list_of_constraints_per_species_MANUAL[taxon]['IN'][go_son] = values[3]
+                            log_file.write(f'add a IN for {go_son} in {taxon}\n')
                             add_in_manual[taxon].add(go_son)
 
+    return add_never_in_manual, add_in_manual
 
-def update_never_from_only(dict_only_in, list_of_species, ancestors, go_owl, never_from_only, union_taxon, log_file):
+
+def orverrule_with_consortium(ancestors, list_of_species, dict_only_in, go_owl, union_taxon, log_file):
+    never_from_only = {}
+    never_in_def = {}
+
     for taxon in list_of_species:
+        never_from_only[taxon] = set()
+        never_in_def[taxon] = {}
+
         anc = ancestors[taxon]
         for tax in dict_only_in:
             if tax not in anc  and tax != taxon:
+            #### check if taxon from GOC only in constraint is not part of either ancestors or descendants of taxon from funtaxis input list
+            #### we want never in constraints to be created for all the other taxon
                 for go in dict_only_in[tax]:
                     go_temp = go_owl.go_descendants_using_valid_edges(go)
                     if go not in never_from_only[taxon] and go not in union_taxon[taxon]:
+                    #### add a never in for the taxon if it is only in for another taxon
+                    #### if go is only in for taxon we do not add a never in
                         never_from_only[taxon].add(go)
                         log_file.write(f'add a never_in for {go} of {taxon} because "only_in" for {tax} and {taxon} is not part of the hierarchy of {tax}')
                     else:
                         log_file.write(f'OVERRULE because {go} comes from an union taxon and thus is not a never_in')
+                    #### now extend the newly created never-in for all child term for this go
                     for go_sons in go_temp:
                         if go_sons not in never_from_only[taxon] and go_sons not in union_taxon[taxon]:
                             never_from_only[taxon].add(go_sons)
@@ -295,32 +344,60 @@ def update_never_from_only(dict_only_in, list_of_species, ancestors, go_owl, nev
                         else:
                             log_file.write(f'OVERRULE because {go} comes from an union taxon and thus is not a never_in')
 
+    return never_from_only, never_in_def
 
-def update_never_in_def(list_of_species, list_of_constraints_per_species_auto, list_of_constraints_per_species_go, never_from_only, never_in_def, add_in_manual, go_owl, taxa, log_file):
+
+def merge_all_constraints(list_of_species, list_of_constraints_per_species_auto, add_in_manual, list_of_constraints_per_species_go, log_file, never_from_only, add_never_in_manual, go_owl):
     for taxon in list_of_species:
         tax = taxon
-        while True:
+        while list_of_constraints_per_species_auto:
             if tax in list_of_constraints_per_species_auto:
                 break
             tax = taxa.get_father(tax)
-        for go in list_of_constraints_per_species_auto[tax]:
-            if go not in add_in_manual[taxon] and go not in list_of_constraints_per_species_go[taxon]['ONLY_IN']:
+
+        if list_of_constraints_per_species_auto:
+            for go in list_of_constraints_per_species_auto[tax]:
+                if go not in add_in_manual[taxon] and go not in list_of_constraints_per_species_go[taxon]['ONLY_IN']:
+                    details = go_owl.go_single_details(go)
+                    never_in_def[taxon][go] = (details['name'],details['namespace'])
+                else:
+                    log_file.write(f'OVERRULE because {go} is a IN in for MANUAL/GO_CONSORTIUM of {taxon} -> NEVER_IN is ERASED!!\n')
+
+        if never_from_only:
+            for go in never_from_only[taxon]:
+                if go not in add_in_manual[taxon]:
+                    details = go_owl.go_single_details(go)
+                    never_in_def[taxon][go] = (details['name'],details['namespace'])
+                else:
+                    log_file.write(f'OVERRULE because {go} is a IN in for MANUAL/GO_CONSORTIUM of {taxon} -> NEVER_IN is ERASED!!\n')
+
+        if list_of_constraints_per_species_go:
+            for go in list_of_constraints_per_species_go[taxon]['NEVER_IN']:
+                if go not in add_in_manual[taxon]:
+                    details = go_owl.go_single_details(go)
+                    never_in_def[taxon][go] = (details['name'],details['namespace'])
+                else:
+                    log_file.write(f'OVERRULE because {go} is a IN in for MANUAL/GO_CONSORTIUM of {taxon} -> NEVER_IN is ERASED!!\n')
+
+    if add_never_in_manual:
+        for taxon in add_never_in_manual:
+            for go in add_never_in_manual[taxon]:
                 details = go_owl.go_single_details(go)
                 never_in_def[taxon][go] = (details['name'],details['namespace'])
-            else:
-                log_file.write(f'OVERRULE because {go} is a IN in for MANUAL/GO_CONSORTIUM of {taxon} -> NEVER_IN is ERASED!!\n')
-        for go in never_from_only[taxon]:
-            if go not in add_in_manual[taxon]:
-                details = go_owl.go_single_details(go)
-                never_in_def[taxon][go] = (details['name'],details['namespace'])
-            else:
-                log_file.write(f'OVERRULE because {go} is a IN in for MANUAL/GO_CONSORTIUM of {taxon} -> NEVER_IN is ERASED!!\n')
-        for go in list_of_constraints_per_species_go[taxon]['NEVER_IN']:
-            if go not in add_in_manual[taxon]:
-                details = go_owl.go_single_details(go)
-                never_in_def[taxon][go] = (details['name'],details['namespace'])
-            else:
-                log_file.write(f'OVERRULE because {go} is a IN in for MANUAL/GO_CONSORTIUM of {taxon} -> NEVER_IN is ERASED!!\n')
+
+    return never_in_def
+
+
+def write_taxon_constraints(never_in_def, taxa, output_dir):
+    for taxon in sorted(never_in_def.keys()):
+        taxon_name = taxa.get_name(taxon)
+        taxon_name = taxon_name.replace(' ','_')
+        with open(os.path.join(output_dir, f'{taxon}_{taxon_name}_constraints.txt'), 'w') as output:
+            for go in never_in_def[taxon]:
+                name = never_in_def[taxon][go][0]
+                namespace = never_in_def[taxon][go][1]
+                go = go.replace('_', ':', 1)
+                output.write(f'{go}\t{name}\t{namespace}\n')
 
 
 if __name__ == "__main__":
@@ -365,83 +442,48 @@ if __name__ == "__main__":
         print(f'WARNING: using default log file {log_file}', file=sys.stderr)
 
     taxa = Taxon(taxon, merge, names)
-
     descendants = taxa.descendants_full_list()
-    ancestors = taxa.ancestors_full_list()
 
-    list_of_total_taxa_constraints, tax_constr_def, ref_nodes, merge_delete = parse_partition(partition, taxa, ancestors)
+    list_of_total_taxa_constraints, merge_delete, tax_constr_def, ancestors, ref_nodes = get_taxa_constraints(partition, taxa)
 
     # Write in taxonConstraintsDefAuto.txt the taxonnomic nodes found and the updated taxons (identiied by a ***NEW*** string.)
-    if merge_delete > 0 and 'bs4' in imports():
-        write_taxnodes(partition, tax_constr_def)
+    if merge_delete > 0 and 'bs4' in import_list:
+        write_auto(partition, tax_constr_def)
 
-    go_owl = GoOwl(owl,"http://purl.obolibrary.org/obo/")
+    go_owl = GoOwl(owl, "http://purl.obolibrary.org/obo/")
     total = go_owl.listing()
+    log_file = open(log_file, 'w')
 
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    list_of_species = get_species_list(taxa, species)
 
-    list_of_species = get_species_list(taxa.merging(), species)
-
-    list_of_constraints_per_species_go = {}
+    #### to check whether the GO only_in derives form union, create a dictionary with keys GO e set of potential taxons that are
+    #### allowed because derived form a Union
     union_taxon = {}
+    list_of_constraints_per_species_go = {}
     for taxon in list_of_species:
         if taxon not in list_of_constraints_per_species_go:
             list_of_constraints_per_species_go[taxon] = {'ONLY_IN': set(), 'NEVER_IN': set()}
         if taxon not in union_taxon:
             union_taxon[taxon] = set()
 
-    dict_only_in = {}
-    log_file = open(log_file, "w")
-
     ### load constraints from GO consortium
-    if go_const is not None:
-         load_consortium(go_const, dict_only_in, ancestors, go_owl, list_of_constraints_per_species_go, union_taxon)
+    dict_only_in = load_constraints_consortiun(go_const, list_of_species, ancestors, go_owl, list_of_constraints_per_species_go, union_taxon) if go_const is not None else {}
 
-    list_of_constraints_per_species_auto = {}
-    for taxon in ref_nodes:
-        if taxon not in list_of_constraints_per_species_auto:
-            list_of_constraints_per_species_auto[taxon] = set()
+    #load automatically generated constraints
+    list_of_constraints_per_species_auto = load_constraints_auto(ref_nodes, aut_const) if aut_const is not None else {}
 
-    ### load/calculate automatic constraints
-    if aut_const is not None:
-        load_auto(aut_const, list_of_constraints_per_species_auto)
+    # ok
+    add_never_in_manual, add_in_manual = overrule_with_manual(list_of_species, manual, go_owl, ancestors, log_file) if manual is not None else {}, {}
 
-    list_of_constraints_per_species_manual = {}
+    ### gives priority to GO consortium because manually curated (hopefully!)
+    ### see if I must add a NEVER_IN to my constraints
+    never_from_only, never_in_def = {}, {}
+    never_from_only, never_in_def = orverrule_with_consortium(ancestors, list_of_species, dict_only_in, go_owl, union_taxon, log_file)
 
-    never_from_only = {}
-    never_in_def = {}
-    add_never_in_manual = {}
-    add_in_manual = {}
-
-    for taxon in list_of_species:
-        never_from_only[taxon] = set()
-        never_in_def[taxon] = dict()
-        add_never_in_manual[taxon] = set()
-        add_in_manual[taxon] = set()
-
-    if manual is not None:
-        load_manual(manual, go_owl, list_of_species, list_of_constraints_per_species_manual, add_never_in_manual, add_in_manual, ancestors, descendants, log_file)
-
-    update_never_from_only(dict_only_in, list_of_species, ancestors, go_owl, never_from_only, union_taxon, log_file)
-    update_never_in_def(list_of_species, list_of_constraints_per_species_auto, list_of_constraints_per_species_go, never_from_only, never_in_def, add_in_manual, go_owl, taxa, log_file)
-
+    #merge automatic, consortium and manual constrains and solve exceptions derived from only-in and in taxon constraints
+    never_in_def = merge_all_constraints(list_of_species, list_of_constraints_per_species_auto, add_in_manual, list_of_constraints_per_species_go, log_file, never_from_only, add_never_in_manual, go_owl)
     log_file.close()
 
-    # do this
-    for taxon in add_never_in_manual:
-        for go in add_never_in_manual[taxon]:
-            details = go_owl.go_single_details(go)
-            never_in_def[taxon][go] = (details['name'],details['namespace'])
+    # Finally write all constraints files
+    write_taxon_constraints(never_in_def, taxa, output_dir)
 
-    # write that
-    for taxon in sorted(never_in_def.keys()):
-        taxon_name = taxa.get_name(taxon)
-        taxon_name = taxon_name.replace(' ','_')
-        out_file = os.path.join(output_dir, f'{taxon}_{taxon_name}_constraints.txt')
-        with open(out_file, "w") as output:
-            for go in never_in_def[taxon]:
-                name = never_in_def[taxon][go][0]
-                namespace = never_in_def[taxon][go][1]
-                go = go.replace('_', ':', 1)
-                output.write(f'{go}\t{name}\t{namespace}\n')
