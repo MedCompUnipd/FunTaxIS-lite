@@ -115,7 +115,7 @@ if __name__ == "__main__":
     total_count = {}
     gos = {}
 
-    with open(args['species'],'r') as species:
+    with open(species, 'r') as species:
         for line in species:
             if line.startswith('>'):
                 # this is a header, hence a taxon id

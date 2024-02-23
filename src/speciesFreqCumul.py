@@ -72,7 +72,7 @@ if __name__ == '__main__':
             if line.startswith('>'):
                 if gos:
                     write_info(taxon, go_owl, gos, gop, out)
-                taxon = line.strip().rstrip('>')
+                taxon = line.strip().lstrip('>')
             else:
                 values = line.strip().split('\t')
                 # values[0] = go_term / values[1] = go_freq / values[4] = go_db

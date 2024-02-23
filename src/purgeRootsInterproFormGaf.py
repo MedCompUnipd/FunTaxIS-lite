@@ -14,7 +14,6 @@
 
 import sys
 import argparse
-import copy
 from owlready2 import *
 from owlLibrary2 import *
 
@@ -60,8 +59,7 @@ if __name__ == "__main__":
         os.makedirs(out_path)
 
     # retrieve set of unclassified species if the input is given
-    if unclass:
-        unclassified = read_unclassified(unclass)
+    unclassified = read_unclassified(unclass) if unclass else set()
 
     with open (gaf_in, 'r') as gaf, open(gaf_out, 'w') as fout:
         visited = set()
@@ -70,10 +68,7 @@ if __name__ == "__main__":
             if line.startswith('!'):
                 # skip the header
                 continue
-
             values = line.strip().split("\t")
-            # save the taxonomy assigned to the current line's annotations, accounting for the syntax of this particular field in the GAF file
-            tax = values[12].split('|')[0].split(':')[1]
 
             #keep only protein annotations
             if values[11] != "protein":
@@ -82,9 +77,9 @@ if __name__ == "__main__":
             #remove root ontology terms annotations
             if  values[4] == 'GO:0008150' or values[4] == 'GO:0003674' or values[4] == 'GO:0005575' or values[6] == 'ND' or values[3] == 'NOT':
                 continue
-
-            #remove entries from taxonomically unclassified organisms
-            if unclass and tax in unclassified:
+            # save the taxonomy assigned to the current line's annotations, accounting for the syntax of this particular field in the GAF file and remove entries from taxonomically unclassified organisms
+            tax = values[12].split('|')[0].split(':')[1]
+            if tax in unclassified:
                 continue
 
             #remove entries from InterPro database
