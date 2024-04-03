@@ -47,7 +47,9 @@ def parse_purged_gaf(gaf_file, ancestors, merged):
             go = values[4].replace(":","_")
 
             # marks whether the annotation comes from one of such databases
-            if ('PANTHER' in values[7]) or ('Pfam' in values[7]) or ('InterPro' in values[7]):
+            if values[6] != 'IEA':
+                values[7] = 'N'
+            elif ('PANTHER' in values[7]) or ('Pfam' in values[7]) or ('InterPro' in values[7]):
                 values[7] = 'P'
             else:
                 values[7] = 'N'

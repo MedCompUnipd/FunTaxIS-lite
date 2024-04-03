@@ -62,8 +62,6 @@ if __name__ == "__main__":
     unclassified = read_unclassified(unclass) if unclass else set()
 
     with open (gaf_in, 'r') as gaf, open(gaf_out, 'w') as fout:
-        visited = set()
-        current = ''
         for line in gaf:
             if line.startswith('!'):
                 # skip the header
@@ -97,10 +95,4 @@ if __name__ == "__main__":
                 if status_panther:
                     continue
 
-            if values[1] != current:
-                current = values[1]
-                visited = set()
-
-            if (values[4], values[6]) not in visited:
-                fout.write(line)
-                visited.add((values[4], values[6]))
+            fout.write(line)

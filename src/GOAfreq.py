@@ -33,6 +33,8 @@ def get_args():
 
 def parse_gaf(gaf_file):
     list_go = {}
+    prot = ''
+    gos = set()
     with open(gaf_file, 'r') as gaf:
         for line in gaf:
             if line.startswith('!'):
@@ -40,10 +42,17 @@ def parse_gaf(gaf_file):
             values = line.strip().split('\t')
             # replacing : with _ for compatibility with all libraries
             goiter = values[4].replace(':','_')
-            if goiter not in list_go:
-                list_go[goiter] = 1
-            else:
-                list_go[goiter] += 1
+            if goiter not in gos:
+                gos.add(goiter)
+                if goiter not in list_go:
+                    list_go[goiter] = 1
+                else:
+                    list_go[goiter] += 1
+
+            if values[1] != prot:
+                prot = values[1]
+                gos = set()
+                gos.add(goiter)
 
     return list_go
 

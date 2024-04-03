@@ -200,7 +200,7 @@ case "${type}" in
         manual_constr="${add_files_folder}${used_man_constr_file}"
         tax_constr="${add_files_folder}${used_tax_constr_file}"
 
-        "${src_folder}"./old_createConstraintsMergedAndSpecific.py -g "${go_const}" -s "${species_list}" -m "${merged}" -t "${nodes}" -n "${names}" -o "${output_folder}" -l "${log_file}" -c "${manual_constr}" -w "${owl_file}" -p "${tax_constr}" ;;
+        "${src_folder}"./createConstraintsMergedAndSpecific.py -g "${go_const}" -s "${species_list}" -m "${merged}" -t "${nodes}" -n "${names}" -o "${output_folder}" -l "${log_file}" -c "${manual_constr}" -w "${owl_file}" -p "${tax_constr}" ;;
     "automatic"|"a"|"auto" )
         # For each species in $species_list_file get the manual and automatic taxonomic constraints.
         echo 'Generate automatic GO taxon constraints'
@@ -215,7 +215,7 @@ case "${type}" in
         manual_constr="${add_files_folder}${used_man_constr_file}"
         tax_constr="${add_files_folder}${used_tax_constr_file}"
 
-        "${src_folder}"./old_createConstraintsMergedAndSpecific.py -a "${aut_const}" -s "${species_list}" -m "${merged}" -t "${nodes}" -n "${names}" -o "${output_folder}" -l "${log_file}" -c "${manual_constr}" -w "${owl_file}" -p "${tax_constr}" ;;
+        "${src_folder}"./createConstraintsMergedAndSpecific.py -a "${aut_const}" -s "${species_list}" -m "${merged}" -t "${nodes}" -n "${names}" -o "${output_folder}" -l "${log_file}" -c "${manual_constr}" -w "${owl_file}" -p "${tax_constr}" ;;
     * )
         echo 'Merge the automatic constraints with the manual GO taxon constraints'
 
@@ -231,5 +231,5 @@ case "${type}" in
         manual_constr="${add_files_folder}${used_man_constr_file}"
         tax_constr="${add_files_folder}${used_tax_constr_file}"
 
-        "${src_folder}"./old_createConstraintsMergedAndSpecific.py -g "${go_const}" -a "${aut_const}" -s "${species_list}" -m "${merged}" -t "${nodes}" -n "${names}" -o "${output_folder}" -l "${log_file}" -c "${manual_constr}" -w "${owl_file}" -p "${tax_constr}" ;;
+        "${src_folder}"./createConstraintsMergedAndSpecific.py -g "${go_const}" -a "${aut_const}" -s "${species_list}" -m "${merged}" -t "${nodes}" -n "${names}" -o "${output_folder}" -l "${log_file}" -c "${manual_constr}" -w "${owl_file}" -p "${tax_constr}" ;;
 esac
