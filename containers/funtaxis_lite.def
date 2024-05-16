@@ -39,7 +39,7 @@ Stage: build
 %labels
     Author Bianca, Ispano, Gazzola
     Version v1.0
-    MyLabel FunTaxIS-lite
+    MedComp - FunTaxIS-lite
 
 
 %help
