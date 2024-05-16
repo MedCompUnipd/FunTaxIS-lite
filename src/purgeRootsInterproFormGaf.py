@@ -14,8 +14,6 @@
 
 import sys
 import argparse
-from owlready2 import *
-from owlLibrary2 import *
 
 
 def get_args():
