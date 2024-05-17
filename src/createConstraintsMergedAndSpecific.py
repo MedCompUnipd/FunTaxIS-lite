@@ -136,7 +136,7 @@ def parse_partition(partition_file, taxa, ancestors):
                 taxon_tmp = tax_def_data[0]
                 if taxon_tmp not in ancestors:
                     # Verify if the bs4 library wasn't imported.
-                    if 'bs4' not in import_list:
+                    if 'bs4' not in imports():
                         print(f'WARNING!!! {taxon_tmp} does not found, so is not considered.\nCheck the link https://www.ncbi.nlm.nih.gov/taxonomy/?term={taxon_tmp} and modify the taxonConstraintsDef.txt file.')
                         continue
                     else:
