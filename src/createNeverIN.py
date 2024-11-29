@@ -64,7 +64,7 @@ def create_never_in(go_dict, out_file, cumul_file, go_owl):
                     if int(values[1]) == 0:
                         update_go_list(go_list, values[0], go_owl)
                         continue
-                    if int(values[1]) == 1 and values[5] == 'P':
+                    if int(values[1]) <= 1 and values[5] == 'P':
                         update_go_list(go_list, values[0], go_owl)
                         continue
 

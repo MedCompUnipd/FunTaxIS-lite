@@ -3,7 +3,6 @@
 74201	Verrucomicrobia	reliable	other	Verrucomicrobia	phylum
 1890424	Synechococcales	reliable	other	Synechococcales	order
 1150	Oscillatoriales	reliable	other	Oscillatoriales	order
-2726947	Mycosphaerellales	unreliable	other	Mycosphaerellales	order
 2607030	Caprimulgimorphae	unreliable	other	Caprimulgimorphae	clade
 204455	Rhodobacterales	unreliable	other	Rhodobacterales	order
 1385	Bacillales	reliable	other	Bacillales	order
@@ -35,7 +34,6 @@
 1644055	Haloferacales	reliable	other	Haloferacales	order
 6157	Platyhelminthes	unreliable	other	Platyhelminthes	phylum
 8825	Neognathae	reliable	other	Neognathae	infraclass
-2691354	Pirellulales	unreliable	other	Pirellulales	order
 1853229	Chitinophagales	reliable	other	Chitinophagales	order
 135614	Xanthomonadales	unreliable	other	Xanthomonadales	order
 33554	Carnivora	reliable	other	Carnivora	order
@@ -119,7 +117,6 @@
 136	Spirochaetales	unreliable	other	Spirochaetales	order
 8906	Charadriiformes	unreliable	other	Charadriiformes	order
 72025	Fabales	reliable	other	Fabales	order
-2731360	Heunggongvirae	unreliable	other	Heunggongvirae	kingdom
 41937	Sapindales	unreliable	other	Sapindales	order
 9263	Metatheria	unreliable	other	Metatheria	clade
 38820	Poales	reliable	other	Poales	order
@@ -137,7 +134,6 @@
 7088	Lepidoptera	reliable	other	Lepidoptera	order
 2037	Actinomycetales	reliable	other	Actinomycetales	order
 8111	Perciformes	reliable	other	Perciformes	order
-2692248	core chlorophytes	unreliable	other	core chlorophytes	clade
 85007	Corynebacteriales	reliable	other	Corynebacteriales	order
 1489922	Eupercaria	unreliable	other	Eupercaria	clade
 1028384	Glomerellales	reliable	other	Glomerellales	order
@@ -147,15 +143,12 @@
 1489911	Cichliformes	unreliable	other	Cichliformes	order
 232347	Magnoliidae	unreliable	other	Magnoliidae	clade
 135623	Vibrionales	unreliable	other	Vibrionales	order
-2732396	Orthornavirae	unreliable	other	Orthornavirae	kingdom
 91347	Enterobacterales	unreliable	other	Enterobacterales	order
-2704949	Trypanosomatida	reliable	other	Trypanosomatida	order
 203683	Planctomycetia	unreliable	other	Planctomycetia	class
 7041	Coleoptera	reliable	other	Coleoptera	order
 8342	Anura	unreliable	other	Anura	order
 41945	Ericales	unreliable	other	Ericales	order
 4036	Apiales	unreliable	other	Apiales	order
-2887326	Moraxellales	unreliable	other	Moraxellales	order
 204441	Rhodospirillales	unreliable	other	Rhodospirillales	order
 213849	Campylobacterales	unreliable	other	Campylobacterales	order
 85010	Pseudonocardiales	reliable	other	Pseudonocardiales	order
