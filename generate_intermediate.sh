@@ -277,7 +277,7 @@ case "${type}" in
     # Generate the taxonomic constraints using data from the gene ontology consortium and the gene ontology annotation. The first ones are more important than the second ones. 
     * )
         echo 'Discard ND, roots and RNACentral hits from GOA' ;
-        "${src_folder}"./purgeRootsInterproFormGaf.py -gaf "${goa_folder}${used_goa}" -unclass "${unclassified_file}" -gafout "${int_file_folder}goa_uniprot_all.gaf" ; 
+        # "${src_folder}"./purgeRootsInterproFormGaf.py -gaf "${goa_folder}${used_goa}" -unclass "${unclassified_file}" -gafout "${int_file_folder}goa_uniprot_all.gaf" ; 
 
         echo 'Calculate GO frequencies from purged GOA file' ;
         "${src_folder}"./GOAfreq.py -owl "${go_folder}${used_go}" -gaf_wo "${int_file_folder}goa_uniprot_all.gaf" \

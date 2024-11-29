@@ -11,9 +11,9 @@
 # Licence:     GPL
 #-------------------------------------------------------------------------------
 
-import sys, argparse, copy
-from owlready2 import *
-from owlLibrary2 import *
+import sys
+import argparse
+import copy
 
 
 def main(args):
